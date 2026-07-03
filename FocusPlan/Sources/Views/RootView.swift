@@ -22,7 +22,7 @@ struct RootView: View {
                     })
                 }
             case .signedIn(let email):
-                HomeView(auth: auth, email: email)
+                MainTabView(auth: auth, email: email)
             }
         }
         .task { auth.start() }
