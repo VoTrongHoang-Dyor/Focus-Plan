@@ -385,6 +385,11 @@ deno_version = 2
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
+# Yêu cầu JWT hợp lệ khi gọi parse-task (khai báo tường minh, không dựa default ngầm)
+# — chống lạm dụng endpoint proxy Gemini (tốn phí).
+[functions.parse-task]
+verify_jwt = true
+
 [analytics]
 enabled = true
 port = 54327
