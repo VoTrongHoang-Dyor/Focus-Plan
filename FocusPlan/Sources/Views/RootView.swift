@@ -11,9 +11,15 @@ struct RootView: View {
                 ProgressView()               // splash
             case .signedOut:
                 if showingSignUp {
-                    SignUpView(auth: auth, onBack: { showingSignUp = false })
+                    SignUpView(auth: auth, onBack: {
+                        auth.errorMessage = nil
+                        showingSignUp = false
+                    })
                 } else {
-                    SignInView(auth: auth, onTapCreateAccount: { showingSignUp = true })
+                    SignInView(auth: auth, onTapCreateAccount: {
+                        auth.errorMessage = nil
+                        showingSignUp = true
+                    })
                 }
             case .signedIn(let email):
                 HomeView(auth: auth, email: email)

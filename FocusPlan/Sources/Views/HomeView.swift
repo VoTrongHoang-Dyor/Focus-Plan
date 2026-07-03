@@ -19,6 +19,8 @@ struct HomeView: View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Xin chào, \(email)").font(.headline)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {

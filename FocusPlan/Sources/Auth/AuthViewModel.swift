@@ -15,6 +15,10 @@ final class AuthViewModel: ObservableObject {
     private let auth = SupabaseManager.shared.client.auth
     private var listenerTask: Task<Void, Never>?
 
+    deinit {
+        listenerTask?.cancel()
+    }
+
     /// Lắng nghe thay đổi auth (bao gồm event .initialSession khôi phục session lúc mở app).
     func start() {
         guard listenerTask == nil else { return }
