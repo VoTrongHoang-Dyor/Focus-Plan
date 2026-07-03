@@ -2,7 +2,9 @@
 
 ## Bối cảnh
 
-PRD `claude/wiki/prd/focus-scheduler.md` (status: Active) và issue `claude/wiki/issues/001-ios-app-shell-supabase-auth.md` đã chốt stack mobile thật là **Native iOS (Swift) + Supabase Auth**. Yêu cầu build bằng Flutter chạy trên phone ảo đi ngược quyết định đó.
+PRD `.claude/wiki/prd/focus-scheduler.md` (status: Active) và issue `.claude/wiki/issues/001-ios-app-shell-supabase-auth.md` đã chốt stack mobile thật là **Native iOS (Swift) + Supabase Auth**. Yêu cầu build bằng Flutter chạy trên phone ảo đi ngược quyết định đó.
+
+> Lưu ý: repo đang trong quá trình chuyển `claude/` → `.claude/` trên đĩa (chưa commit tại thời điểm viết spec này). Đường dẫn trong spec này trỏ theo vị trí `.claude/` hiện có trên đĩa; nếu việc đổi tên này chưa chính thức, cần đối chiếu lại trước khi dùng spec để lập plan.
 
 Đã hỏi và chốt với user:
 
