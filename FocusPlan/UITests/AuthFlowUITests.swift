@@ -77,7 +77,9 @@ final class AuthFlowUITests: XCTestCase {
                       "[Criteria 1] Greeting sai email. label=\(greeting.label)")
 
         // ===== Criteria 5: Empty-state (dải 7 ngày + card) =====
-        XCTAssertTrue(app.staticTexts["Chưa có task nào — sẽ thêm ở slice sau"].exists,
+        // Sau issue 002, empty-state của Home do TaskListView cung cấp (user mới chưa có task).
+        // List load async từ Supabase → chờ text xuất hiện.
+        XCTAssertTrue(app.staticTexts["Chưa có task nào — thêm bằng nút +"].waitForExistence(timeout: 15),
                       "[Criteria 5] Thiếu card empty-state")
         XCTAssertTrue(app.staticTexts["T2"].exists && app.staticTexts["T6"].exists,
                       "[Criteria 5] Thiếu dải 7 ngày")
