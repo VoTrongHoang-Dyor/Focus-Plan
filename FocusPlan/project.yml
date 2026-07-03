@@ -39,3 +39,14 @@ targets:
         GENERATE_INFOPLIST_FILE: "YES"
     dependencies:
       - target: FocusPlan
+  FocusPlanUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: UITests
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: "YES"
+        TEST_TARGET_NAME: FocusPlan
+    dependencies:
+      - target: FocusPlan
