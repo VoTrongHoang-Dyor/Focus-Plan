@@ -4,7 +4,7 @@ import SwiftUI
 struct FocusPlanApp: App {
     var body: some Scene {
         WindowGroup {
-            Text("Focus Plan")
+            RootView()
         }
     }
 }
