@@ -67,7 +67,7 @@ Thêm vào "Skill được phép dùng":
 
 | Skill | Trigger |
 |---|---|
-| `superpowers:brainstorming` | Feature mới / thay đổi kiến trúc đáng kể, sau khi có Decision Log từ librarian (hoặc khi user nêu ý tưởng chưa qua librarian). Bắt buộc, không bỏ qua vì "thấy đơn giản". |
+| `superpowers:brainstorming` | Feature mới / thay đổi kiến trúc đáng kể, chỉ khi Decision Log từ librarian (hoặc ý tưởng user nêu, nếu chưa qua librarian) chưa đủ rõ. Một khi đã trigger thì bắt buộc, không bỏ qua vì "thấy đơn giản". |
 | `superpowers:writing-plans` | Sau khi brainstorming chốt design, viết plan chi tiết trước khi giao coder. |
 | `superpowers:systematic-debugging` | Task là bugfix (không phải feature mới): lập kế hoạch điều tra root cause trước khi giao coder. Thay thế nhánh brainstorming/writing-plans cho loại task này. |
 | `write-a-prd` | Sau khi nhận Decision Log từ librarian, soạn PRD đầy đủ → `claude/wiki/prd/<slug>.md`. |

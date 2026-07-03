@@ -2,10 +2,10 @@
 
 ## Danh sách team
 
-- leader: .claude/agents/leader.md
-- coder: .claude/agents/coder.md
-- reviewer: .claude/agents/reviewer.md
-- librarian: .claude/agents/librarian.md
+- leader: claude/agents/leader.md
+- coder: claude/agents/coder.md
+- reviewer: claude/agents/reviewer.md
+- librarian: claude/agents/librarian.md
 
 # Quy trình làm việc :
 
