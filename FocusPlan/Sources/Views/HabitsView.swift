@@ -61,13 +61,17 @@ struct HabitsView: View {
             } label: {
                 Image(systemName: status == .done ? "checkmark.circle.fill" : "circle")
                     .foregroundStyle(status == .done ? .green : .secondary)
-            }.buttonStyle(.plain)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Đánh dấu hoàn thành")
             Button {
                 Task { await vm.mark(habit, .missed) }
             } label: {
                 Image(systemName: status == .missed ? "xmark.circle.fill" : "circle")
                     .foregroundStyle(status == .missed ? .red : .secondary)
-            }.buttonStyle(.plain)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Đánh dấu bỏ lỡ")
         }
         .contentShape(Rectangle())
         .onTapGesture { editingHabit = habit }
