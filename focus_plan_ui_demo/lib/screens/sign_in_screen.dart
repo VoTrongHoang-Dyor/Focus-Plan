@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../services/session_service.dart';
 import 'home_screen.dart';
 import 'sign_up_screen.dart';
 
@@ -36,9 +37,11 @@ class _SignInScreenState extends State<SignInScreen> {
     return null;
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     final email = _emailController.text.trim();
+    await SessionService.signIn(email);
+    if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => HomeScreen(email: email)),
       (route) => false,

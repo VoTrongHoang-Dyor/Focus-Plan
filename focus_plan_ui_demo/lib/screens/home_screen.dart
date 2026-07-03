@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
 
+import '../services/session_service.dart';
+import 'sign_in_screen.dart';
+
 class HomeScreen extends StatelessWidget {
   final String email;
 
   const HomeScreen({super.key, required this.email});
 
   static const _labels = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+
+  Future<void> _handleSignOut(BuildContext context) async {
+    await SessionService.signOut();
+    if (!context.mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const SignInScreen()),
+      (route) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +35,7 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Đăng xuất',
-            onPressed: () {},
+            onPressed: () => _handleSignOut(context),
           ),
         ],
       ),
