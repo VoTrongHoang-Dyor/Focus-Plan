@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 
 import 'home_screen.dart';
-import 'sign_up_screen.dart';
 
-class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmController = TextEditingController();
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmController.dispose();
     super.dispose();
   }
 
@@ -36,6 +37,11 @@ class _SignInScreenState extends State<SignInScreen> {
     return null;
   }
 
+  String? _validateConfirm(String? value) {
+    if (value != _passwordController.text) return 'Mật khẩu xác nhận không khớp';
+    return null;
+  }
+
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     final email = _emailController.text.trim();
@@ -48,17 +54,15 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text('Tạo tài khoản')),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Form(
             key: _formKey,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('Đăng nhập', style: Theme.of(context).textTheme.headlineMedium),
-                const SizedBox(height: 32),
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -72,19 +76,22 @@ class _SignInScreenState extends State<SignInScreen> {
                   decoration: const InputDecoration(labelText: 'Mật khẩu'),
                   validator: _validatePassword,
                 ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _confirmController,
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: 'Xác nhận mật khẩu'),
+                  validator: _validateConfirm,
+                ),
                 const SizedBox(height: 24),
                 FilledButton(
                   onPressed: _submit,
-                  child: const Text('Đăng nhập'),
+                  child: const Text('Tạo tài khoản'),
                 ),
                 const SizedBox(height: 16),
                 TextButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const SignUpScreen()),
-                    );
-                  },
-                  child: const Text('Chưa có tài khoản? Tạo tài khoản'),
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Đã có tài khoản? Đăng nhập'),
                 ),
               ],
             ),
