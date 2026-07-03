@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'screens/home_screen.dart';
+import 'screens/sign_in_screen.dart';
 import 'theme.dart';
 
 void main() {
@@ -16,7 +16,7 @@ class FocusPlanDemoApp extends StatelessWidget {
       title: 'Focus Plan Demo',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
-      home: const HomeScreen(email: 'demo@example.com'),
+      home: const SignInScreen(),
     );
   }
 }
