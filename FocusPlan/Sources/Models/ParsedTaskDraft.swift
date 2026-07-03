@@ -1,0 +1,37 @@
+import Foundation
+
+struct ParsedTaskDraft: Codable {
+    var name: String
+    var estimatedMinutes: Int?
+    var priority: TaskPriority
+    var deadlineRaw: String?
+    var needsConfirmation: Bool
+    var note: String?
+
+    enum CodingKeys: String, CodingKey {
+        case name
+        case estimatedMinutes = "estimated_minutes"
+        case priority
+        case deadlineRaw = "deadline"
+        case needsConfirmation = "needs_confirmation"
+        case note
+    }
+
+    /// Parse deadlineRaw (ISO8601 đầy đủ hoặc date-only) sang Date nếu được.
+    var deadlineDate: Date? {
+        guard let raw = deadlineRaw, !raw.isEmpty else { return nil }
+        let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let d = iso.date(from: raw) { return d }
+        iso.formatOptions = [.withInternetDateTime]
+        if let d = iso.date(from: raw) { return d }
+        let dateOnly = DateFormatter()
+        dateOnly.dateFormat = "yyyy-MM-dd"
+        dateOnly.timeZone = TimeZone(identifier: "UTC")
+        return dateOnly.date(from: raw)
+    }
+}
+
+extension ParsedTaskDraft: Identifiable {
+    var id: String { name }
+}
