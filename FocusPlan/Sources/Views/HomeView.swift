@@ -30,15 +30,7 @@ struct HomeView: View {
                     }
                 }
 
-                Spacer()
-                VStack {
-                    Text("Chưa có task nào — sẽ thêm ở slice sau")
-                        .multilineTextAlignment(.center)
-                        .padding(24)
-                }
-                .frame(maxWidth: .infinity)
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
-                Spacer()
+                TaskListView()
             }
             .padding(16)
             .navigationTitle("Today")
