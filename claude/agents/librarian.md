@@ -211,4 +211,3 @@ Không có frontmatter `status` (không phải PRD/Decision — là tài liệu 
 > Nếu wiki không phản ánh code thực tế, các agent khác sẽ hành động dựa trên "Sự thật cũ" và gây ra bugs hoặc phá hoại kiến trúc.
 >
 > **Librarian phải được gọi (GRILL) trước khi leader lập plan cho feature/kiến trúc lớn, và (UPDATE) sau mỗi lần coder hoàn thành một task đáng kể.**
-```
