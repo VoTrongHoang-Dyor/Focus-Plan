@@ -4,7 +4,7 @@ status: todo
 
 ## Parent Decision Log
 
-`claude/wiki/decisions/focus-scheduler-decision-log.md`
+`.claude/wiki/decisions/focus-scheduler-decision-log.md`
 
 ## What to build
 

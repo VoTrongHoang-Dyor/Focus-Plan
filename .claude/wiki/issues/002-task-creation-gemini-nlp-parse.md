@@ -4,7 +4,7 @@ status: todo
 
 ## Parent Decision Log
 
-`claude/wiki/decisions/focus-scheduler-decision-log.md`
+`.claude/wiki/decisions/focus-scheduler-decision-log.md`
 
 ## What to build
 
@@ -19,7 +19,7 @@ Cho phép user tạo/sửa task bằng ngôn ngữ tự nhiên; Gemini 2.0 Flash
 
 ## Blocked by
 
-- Blocked by `claude/wiki/issues/001-ios-app-shell-supabase-auth.md`
+- Blocked by `.claude/wiki/issues/001-ios-app-shell-supabase-auth.md`
 
 ## Decision Log sections addressed
 

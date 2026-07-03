@@ -3,7 +3,7 @@ status: Active
 date: 2026-07-02
 ---
 
-# Focus Scheduler App — PRD
+# Focus Plan App — PRD
 
 ## Problem Statement
 
@@ -20,6 +20,8 @@ Một app mobile iOS-first (Swift native), multi-user, ship ra ngoài công khai
 - Gamification nhẹ: streak, loss aversion (không tiền thật), 6 levels badge, streak insurance, Domino Preview cuối ngày.
 - Monetization: Stripe subscription web-only, app chỉ check trạng thái — né phí IAP.
 - Monk Mode/Screen Time setting opt-in, friction cao để tắt giữa chừng.
+- Habit/Routine tracking: module riêng cho việc lặp lại hàng ngày theo giờ cố định (vd thiền, tập thể dục), tách biệt khỏi task đơn lẻ do Scheduling Engine xếp lịch.
+- Pomodoro timer UI: màn hình đếm giờ focus session (start/stop/pause), là nguồn dữ liệu thực tế cho Gamification (badge Level 3 hiện đang giả định "dữ liệu Pomodoro" mà chưa có module nào tạo ra).
 
 ## User Stories
 
@@ -55,12 +57,16 @@ Một app mobile iOS-first (Swift native), multi-user, ship ra ngoài công khai
 30. As a beta user, I want the AI features to run on a free tier without me being charged, so that I can try the product risk-free.
 31. As the developer, I want the scheduling engine to be a pure, deterministic function I can test with fixed inputs, so that I can trust it without flaky AI-dependent behavior.
 32. As the developer, I want Gemini scoped strictly to NLP parsing and copy generation, so that the core scheduling logic never depends on non-deterministic LLM reasoning.
+33. As a user, I want to set up recurring habits with a fixed time each day (e.g. meditation, exercise), so that I can track routines separately from one-off tasks without them competing for scheduling logic.
+34. As a user, I want a visible Pomodoro timer with start/stop/pause, so that my actual focus sessions generate the data my gamification badges are based on, instead of that data being assumed but never captured.
 
 ## Implementation Decisions
 
 - **Auth & App Shell**: Native iOS (Swift) client; Supabase Auth cho signup/signin/session persistence. Android (Kotlin) hoãn đến khi iOS validate được core loop.
 - **Task Capture module**: Nhận input ngôn ngữ tự nhiên, gọi Gemini 2.0 Flash chỉ để NLP parse thành task có cấu trúc (tên, thời lượng ước tính, priority, deadline). User xác nhận/sửa trước khi lưu. Không giao reasoning lịch trình cho LLM.
-- **Scheduling Engine module (deep module)**: Deterministic, rule-based, pure function — task list + dữ liệu lịch sử vào, schedule ra. Trách nhiệm: sắp xếp theo priority, energy-matching (rule tĩnh ban đầu, sau nâng cấp trọng số theo lịch sử completion rate), chèn buffer, nới buffer theo "nợ lịch" (>30% task bị dời), phát hiện xung đột slot.
+- **Scheduling Engine module (deep module)**: Deterministic, rule-based, pure function — task list + dữ liệu lịch sử + danh sách busy-block từ habit vào, schedule ra. Trách nhiệm: sắp xếp theo priority, energy-matching (rule tĩnh ban đầu, sau nâng cấp trọng số theo lịch sử completion rate), chèn buffer, nới buffer theo "nợ lịch" (>30% task bị dời), phát hiện xung đột slot, tránh xếp task đè lên khung giờ habit đã cố định.
+- **Habit/Routine Tracking module**: Độc lập với Scheduling Engine — checklist giờ cố định do user tự đặt, không qua thuật toán xếp lịch. Điểm tích hợp duy nhất: xuất danh sách khung giờ habit ra làm busy-block input cho Scheduling Engine. UI cụ thể của checklist chờ review (HITL).
+- **Pomodoro Timer module**: Màn hình đếm giờ focus session (start/stop/pause), chạy nền khi app minimize/khoá màn hình, kết thúc phiên báo qua local notification — tái dùng hạ tầng của Alarm/Notification module, không xây cơ chế thông báo mới. Là nguồn dữ liệu Pomodoro thực tế cho Gamification module (badge Level 3, streak tính theo Pomodoro). Độ dài phiên có cấu hình được hay cố định 25 phút — chờ quyết định.
 - **Alarm/Notification module**: Local notification iOS, lặp lại 1-2 phút/lần trong ~10 phút, tone tăng dần, best-effort (không dùng Critical Alerts entitlement). Dừng khi user tương tác.
 - **Reschedule Cron module**: Supabase pg_cron + Edge Function, chạy 9h sáng theo timezone từng user. Gọi Scheduling Engine, push kết quả qua APNs (iOS) — interface FCM để sẵn cho Android.
 - **Daily Reflection module**: Chạy trong cùng lần gọi Edge Function với reschedule cron. Tổng hợp dữ liệu khách quan (done/missed/late, thời lượng Pomodoro thực tế). Một lần gọi Gemini sinh 2 phần output tách biệt rõ ràng: giải thích reschedule + tóm tắt reflection.
@@ -79,12 +85,12 @@ Cross-cutting:
 
 ## Testing Decisions
 
-- Test tốt ở đây nghĩa là **integration-style qua public interface** của module — input vào, output ra — không mock collaborator nội bộ, theo đúng skill `tdd` của repo này (`claude/skills/tdd/tests.md`): test WHAT module làm, không phải HOW; sống sót qua refactor nội bộ.
+- Test tốt ở đây nghĩa là **integration-style qua public interface** của module — input vào, output ra — không mock collaborator nội bộ, theo đúng skill `tdd` của repo này (`.claude/skills/tdd/tests.md`): test WHAT module làm, không phải HOW; sống sót qua refactor nội bộ.
 - Module cần test (chỉ deep module thuần logic, theo phạm vi đã chọn):
-  - **Scheduling Engine** (sắp xếp priority, energy-matching tĩnh + có trọng số lịch sử, chèn buffer, nới buffer theo nợ lịch, phát hiện xung đột) — fixture task-list + dữ liệu lịch sử cố định vào, schedule chính xác ra.
+  - **Scheduling Engine** (sắp xếp priority, energy-matching tĩnh + có trọng số lịch sử, chèn buffer, nới buffer theo nợ lịch, phát hiện xung đột, tránh đè lên busy-block từ habit) — fixture task-list + dữ liệu lịch sử + busy-block cố định vào, schedule chính xác ra.
   - **Gamification core** (chuyển trạng thái streak chain, ngưỡng level badge, điều kiện/giới hạn streak insurance) — fixture lịch sử task/Pomodoro cố định vào, trạng thái streak/badge chính xác ra.
-- Rõ ràng ngoài phạm vi test tự động ở giai đoạn này: luồng UI, thời điểm gửi notification (phụ thuộc device/OS), chất lượng output Gemini (non-deterministic, đánh giá thủ công), phần nối dây Edge Function/cron (test thủ công trên Supabase project thật trong giai đoạn beta).
-- Prior art: `claude/skills/tdd/tests.md` trong repo này đã ghi lại pattern test tốt/xấu (integration-style vs. implementation-detail) — áp dụng cho 2 module trên.
+- Rõ ràng ngoài phạm vi test tự động ở giai đoạn này: luồng UI, thời điểm gửi notification (phụ thuộc device/OS), chất lượng output Gemini (non-deterministic, đánh giá thủ công), phần nối dây Edge Function/cron (test thủ công trên Supabase project thật trong giai đoạn beta), Habit/Routine Tracking UI (checklist thuần, không phải deep logic), Pomodoro Timer UI (timer/notification, đánh giá thủ công trên device thật).
+- Prior art: `.claude/skills/tdd/tests.md` trong repo này đã ghi lại pattern test tốt/xấu (integration-style vs. implementation-detail) — áp dụng cho 2 module trên.
 
 ## Out of Scope
 
@@ -100,6 +106,8 @@ Cross-cutting:
 ## Further Notes
 
 - App này chạy song song với Teacher AI (vẫn là dự án chính) — sequencing/bandwidth chia theo đó, iOS-first để giảm rủi ro trước khi cam kết Android.
-- Câu hỏi còn mở (xem Decision Log mục "Still open"): framework stack web cho trang subscription Stripe, share hay tách Supabase project với Teacher AI, UX compliance "external purchase" của Apple chi tiết, format onboarding/philosophy delivery, pricing cụ thể.
-- Toàn bộ bối cảnh và lý do cho từng quyết định ở trên nằm tại `claude/wiki/decisions/focus-scheduler-decision-log.md`; 16 issue triển khai (`claude/wiki/issues/001-*.md` đến `016-*.md`) đã chia PRD này thành các vertical slice làm độc lập được, sắp theo dependency.
-- Theo Second Brain schema của repo (`CLAUDE.md` §7), PRD này giờ hiển thị qua Dataview query "Active PRD" trong Obsidian (vault = `claude/wiki/`). Upload lên NotebookLM để tổng hợp thêm là bước thủ công, người dùng tự làm.
+- **Rebrand & mục tiêu kép (2026-07-03)**: Dự án đổi định vị thành "Focus Plan", đồng thời phục vụ 2 mục tiêu song song, không cái nào là phụ: (a) sản phẩm chạy thật như mô tả ở trên, và (b) case study quy trình làm việc — dùng bộ skills cá nhân (`.claude/skills/`) và bộ não thứ 2 (`.claude/wiki/`) của repo này để demo cho nhà tuyển dụng/khách hàng tiềm năng. "Done" cho mục tiêu (b) nghĩa là: app chạy được thật (TestFlight/demo video) + wiki/PRD/decision log đủ sạch để đọc công khai. Không có deadline cứng — chấp nhận rủi ro tiến độ kéo dài để đổi lấy scope đầy đủ hơn.
+- **Tác động tới 16 issue hiện có**: `.claude/wiki/issues/001-*.md` đến `016-*.md` sẽ cần viết lại/bổ sung ở bước `prd-to-issues` tiếp theo, vì 2 module mới (Habit/Routine Tracking, Pomodoro Timer) chèn vào core loop — Habit cần tích hợp busy-block với Scheduling Engine trước khi module đó coi là hoàn chỉnh; Pomodoro Timer cần có trước Gamification core (issue 007) để có dữ liệu thật thay vì giả định.
+- Câu hỏi còn mở (xem Decision Log mục "Still open" và section rebrand): framework stack web cho trang subscription Stripe, share hay tách Supabase project với Teacher AI, UX compliance "external purchase" của Apple chi tiết, format onboarding/philosophy delivery, pricing cụ thể, UI cụ thể cho Habit checklist, độ ưu tiên implement Habit vs. Pomodoro Timer, độ dài phiên Pomodoro có cấu hình được không.
+- Toàn bộ bối cảnh và lý do cho từng quyết định ở trên nằm tại `.claude/wiki/decisions/focus-scheduler-decision-log.md`; 16 issue triển khai hiện có đã chia PRD (bản trước rebrand) thành các vertical slice làm độc lập được, sắp theo dependency — thứ tự này cần rà soát lại sau rebrand.
+- Theo Second Brain schema của repo (`CLAUDE.md` §7), PRD này giờ hiển thị qua Dataview query "Active PRD" trong Obsidian (vault = `.claude/wiki/`). Upload lên NotebookLM để tổng hợp thêm là bước thủ công, người dùng tự làm.

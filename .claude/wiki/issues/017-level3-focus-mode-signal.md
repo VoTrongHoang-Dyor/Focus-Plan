@@ -4,7 +4,7 @@ status: todo
 
 ## Parent Decision Log
 
-`claude/wiki/decisions/focus-scheduler-decision-log.md`
+`.claude/wiki/decisions/focus-scheduler-decision-log.md`
 
 ## What to build
 
@@ -18,8 +18,8 @@ Level 3 badge (mốc "tắt điện thoại") đo bằng tín hiệu Focus Mode/
 
 ## Blocked by
 
-- Blocked by `claude/wiki/issues/007-gamification-core-streak-badges.md`
-- Blocked by `claude/wiki/issues/009-screen-time-monk-mode.md`
+- Blocked by `.claude/wiki/issues/009-gamification-core-streak-badges.md`
+- Blocked by `.claude/wiki/issues/011-screen-time-monk-mode.md`
 
 ## Decision Log sections addressed
 

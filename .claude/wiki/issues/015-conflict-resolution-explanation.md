@@ -4,11 +4,11 @@ status: todo
 
 ## Parent Decision Log
 
-`claude/wiki/decisions/focus-scheduler-decision-log.md`
+`.claude/wiki/decisions/focus-scheduler-decision-log.md`
 
 ## What to build
 
-Khi 2 task tranh 1 slot, ngoài việc engine (issue 003) chọn theo priority, Gemini sinh thêm 1 câu giải thích ngắn bằng ngôn ngữ tự nhiên tại sao task A thắng task B (dùng chung path Gemini đã có cho giải thích reschedule).
+Khi 2 task tranh 1 slot, ngoài việc engine (issue 004) chọn theo priority, Gemini sinh thêm 1 câu giải thích ngắn bằng ngôn ngữ tự nhiên tại sao task A thắng task B (dùng chung path Gemini đã có cho giải thích reschedule).
 
 ## Acceptance criteria
 
@@ -18,7 +18,7 @@ Khi 2 task tranh 1 slot, ngoài việc engine (issue 003) chọn theo priority, 
 
 ## Blocked by
 
-- Blocked by `claude/wiki/issues/003-deterministic-scheduling-engine-v1.md`
+- Blocked by `.claude/wiki/issues/004-deterministic-scheduling-engine-v1.md`
 
 ## Decision Log sections addressed
 

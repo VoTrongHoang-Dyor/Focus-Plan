@@ -4,7 +4,7 @@ status: todo
 
 ## Parent Decision Log
 
-`claude/wiki/decisions/focus-scheduler-decision-log.md`
+`.claude/wiki/decisions/focus-scheduler-decision-log.md`
 
 ## What to build
 
@@ -18,8 +18,8 @@ Tinh chỉnh prompt/copy của Gemini (dùng trong reschedule + reflection) đ�
 
 ## Blocked by
 
-- Blocked by `claude/wiki/issues/005-9am-reschedule-cron.md`
-- Blocked by `claude/wiki/issues/006-daily-reflection-generation.md`
+- Blocked by `.claude/wiki/issues/007-9am-reschedule-cron.md`
+- Blocked by `.claude/wiki/issues/008-daily-reflection-generation.md`
 
 ## Decision Log sections addressed
 

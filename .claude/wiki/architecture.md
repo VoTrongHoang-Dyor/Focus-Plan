@@ -5,7 +5,7 @@
 ## Cấu trúc thư mục
 
 - `CLAUDE.md` — hướng dẫn hành vi chung (7 quy tắc): tư duy trước khi code, tối giản, thay đổi phẫu thuật, thực thi theo mục tiêu, kiểm tra cwd trước `cd`, luôn trả lời tiếng Việt, và Second Brain wiki schema (mục 7).
-- `claude/` — workspace Claude Code:
+- `.claude/` — workspace Claude Code:
   - `agents/` — persona cho Agent Teams: `leader.md`, `coder.md`, `reviewer.md`, `librarian.md`.
   - `commands/` — slash command tuỳ biến: `team.md`.
   - `plans/` — plan đang lưu: `plan.md`.

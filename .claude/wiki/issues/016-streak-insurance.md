@@ -4,7 +4,7 @@ status: todo
 
 ## Parent Decision Log
 
-`claude/wiki/decisions/focus-scheduler-decision-log.md`
+`.claude/wiki/decisions/focus-scheduler-decision-log.md`
 
 ## What to build
 
@@ -18,7 +18,7 @@ Streak Insurance: cho phép "cứu" streak 1 lần/tuần nếu user hoàn thàn
 
 ## Blocked by
 
-- Blocked by `claude/wiki/issues/007-gamification-core-streak-badges.md`
+- Blocked by `.claude/wiki/issues/009-gamification-core-streak-badges.md`
 
 ## Decision Log sections addressed
 

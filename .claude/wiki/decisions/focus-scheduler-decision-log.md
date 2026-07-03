@@ -3,11 +3,10 @@ status: Active
 date: 2026-07-02
 ---
 
-# Focus Scheduler App — Decision Log
+# Focus Plan App — Decision Log
 
 
-App mobile chống trì hoãn: báo thức + reschedule tự động 9h sáng + streak/gamification. Dự án song song với Teacher AI (vẫn là dự án chính).
-
+App mobile chống trì hoãn: báo thức + reschedule tự động 9h sáng + streak/gamification.
 ## Đối tượng & mô hình sản phẩm
 
 - Sản phẩm ship ra ngoài (multi-user, auth, billing, compliance) — không phải personal tool.
@@ -85,3 +84,28 @@ App mobile chống trì hoãn: báo thức + reschedule tự động 9h sáng + 
 1. Social accountability (share streak với người khác, leaderboard bạn bè) — kéo theo bài toán multi-user relationship mới (friend system, privacy giữa users), ngoài scope "beta validate core loop".
 2. AI phát hiện pattern trì hoãn và chủ động gợi ý thay đổi lịch trình dài hạn — quay lại đúng mâu thuẫn "Gemini không làm reasoning" đã né. Cần phân tích xu hướng dài hạn (không phải 1 ngày), đúng nghĩa reasoning chủ quan. Để dành sau khi core loop đã chạy ổn và có đủ data thật.
 3. Voice input cho NLP task creation — thêm nguyên 1 tầng speech-to-text + latency UX risk, không phải bottleneck của core loop hiện tại.
+
+## Rebrand: Focus Scheduler → Focus Plan (grill-me 2026-07-03)
+
+- Đổi tên/định vị thương hiệu thành "Focus Plan". Đây là bản mở rộng của cùng 1 PRD/dự án, không supersede — nối thêm vào Decision Log và PRD hiện có, giữ `status: Active`.
+- Mục tiêu kép mới: (a) case study quy trình làm việc (bộ skills cá nhân trong `.claude/skills/` + bộ não thứ 2/wiki) để demo cho nhà tuyển dụng/khách hàng tiềm năng, (b) sản phẩm chạy thật. "Done" = app chạy được thật (TestFlight/demo video) + wiki/PRD/decision log đủ sạch để đọc công khai — cả hai tiêu chí song song, không cái nào là phụ.
+- Không đặt deadline cứng. Chấp nhận rủi ro dự án kéo dài để đổi lấy scope đầy đủ hơn — không giới hạn thêm.
+
+## Tính năng mới bổ sung (lấy cảm hứng từ TickTick, MyPlan, Clarify, FlowStack, Focus To-Do)
+
+### Habit/Routine tracking (TickTick, MyPlan)
+
+- Module riêng, KHÔNG đi qua Scheduling Engine như task thường — checklist giờ cố định do user tự đặt (vd 6h sáng thiền, tập thể dục).
+- Điểm tích hợp duy nhất với Scheduling Engine: khung giờ habit phải được đọc như busy-block, để Scheduling Engine không xếp task thường đè lên slot habit.
+- Còn mở: UI cụ thể cho habit checklist, độ ưu tiên implement so với Pomodoro timer.
+
+### Pomodoro timer UI (Clarify, FlowStack, Focus To-Do)
+
+- Xác nhận đây là cơ chế lấp lỗ hổng có sẵn trong PRD: Gamification/Level 3 badge đã giả định "dữ liệu Pomodoro thực tế" nhưng chưa issue nào định nghĩa cách sinh ra dữ liệu đó. Timer (start/stop/pause) chính là nguồn dữ liệu đó.
+- Chạy nền khi app bị minimize/khoá màn hình; kết thúc phiên báo qua local notification — tái dùng hạ tầng Alarm module đã có (issue 004), không xây cơ chế thông báo mới.
+- Còn mở: độ dài phiên có cấu hình được không (mặc định kiểu Pomodoro cổ điển 25 phút?).
+
+## Tác động tới 16 issue hiện có
+
+- Cần viết lại thứ tự/nội dung issue vì 2 nhóm tính năng mới chèn vào core loop: Habit cần tích hợp busy-block với Scheduling Engine (issue 003/012) trước khi coi Scheduling Engine "hoàn chỉnh"; Pomodoro timer cần có trước Gamification core (issue 007) để có dữ liệu thật thay vì giả định.
+- Số issue chính xác, thứ tự dependency mới, và issue nào cần sửa vs. issue nào cần thêm mới — xử lý ở bước `prd-to-issues` sau khi PRD được cập nhật, không chốt chi tiết ở đây.

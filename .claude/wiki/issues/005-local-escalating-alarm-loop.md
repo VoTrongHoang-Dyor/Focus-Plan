@@ -4,7 +4,7 @@ status: todo
 
 ## Parent Decision Log
 
-`claude/wiki/decisions/focus-scheduler-decision-log.md`
+`.claude/wiki/decisions/focus-scheduler-decision-log.md`
 
 ## What to build
 
@@ -19,7 +19,7 @@ Cơ chế báo thức local notification: khi đến giờ task đã xếp lịc
 
 ## Blocked by
 
-- Blocked by `claude/wiki/issues/003-deterministic-scheduling-engine-v1.md`
+- Blocked by `.claude/wiki/issues/004-deterministic-scheduling-engine-v1.md`
 
 ## Decision Log sections addressed
 
