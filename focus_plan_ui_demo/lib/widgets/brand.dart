@@ -28,10 +28,10 @@ class Mascot extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(size * 0.28),
       child: Image.asset(
-        'assets/images/mascot.jpg',
+        'assets/images/mascot.png',
         width: size,
         height: size,
-        fit: BoxFit.cover,
+        fit: BoxFit.contain,
         semanticLabel: 'Linh vật Focus Plan',
       ),
     );
