@@ -298,6 +298,14 @@ class _BufferRow extends StatelessWidget {
     required this.timeWidth,
   });
 
+  /// < 60 phút: "25'". >= 60 phút: "3h 45m" (bỏ phần phút nếu = 0).
+  static String _formatGap(int minutes) {
+    if (minutes < 60) return "$minutes'";
+    final h = minutes ~/ 60;
+    final m = minutes % 60;
+    return m == 0 ? '${h}h' : '${h}h ${m}m';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -328,7 +336,7 @@ class _BufferRow extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    'Nghỉ $minutes\'',
+                    'Nghỉ ${_formatGap(minutes)}',
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                     ),
