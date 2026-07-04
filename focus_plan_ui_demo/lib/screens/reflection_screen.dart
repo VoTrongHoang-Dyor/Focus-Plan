@@ -72,16 +72,7 @@ class _ReflectionScreenState extends State<ReflectionScreen> {
 
     final cells = <Widget>[
       for (var i = 0; i < leadingBlanks; i++) const SizedBox.shrink(),
-      for (var day = 1; day <= daysInMonth; day++)
-        _DayCell(
-          day: day,
-          reflection: _reflectionFor(day),
-          isToday: _isCurrentMonth && day == _today.day,
-          onTap: () {
-            final reflection = _reflectionFor(day);
-            if (reflection != null) _openDetail(day, reflection);
-          },
-        ),
+      for (var day = 1; day <= daysInMonth; day++) _dayCell(day),
     ];
     while (cells.length % 7 != 0) {
       cells.add(const SizedBox.shrink());
@@ -98,6 +89,16 @@ class _ReflectionScreenState extends State<ReflectionScreen> {
       );
     }
     return Column(children: rows);
+  }
+
+  Widget _dayCell(int day) {
+    final reflection = _reflectionFor(day);
+    return _DayCell(
+      day: day,
+      reflection: reflection,
+      isToday: _isCurrentMonth && day == _today.day,
+      onTap: reflection == null ? null : () => _openDetail(day, reflection),
+    );
   }
 }
 
@@ -174,11 +175,27 @@ class _WeekdayRow extends StatelessWidget {
   }
 }
 
+/// Chấm tròn nhỏ chỉ mức độ ngày (dùng chung ở lịch, legend, chi tiết).
+class _Dot extends StatelessWidget {
+  final Color color;
+
+  const _Dot(this.color);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 8,
+      height: 8,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+    );
+  }
+}
+
 class _DayCell extends StatelessWidget {
   final int day;
   final DailyReflection? reflection;
   final bool isToday;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const _DayCell({
     required this.day,
@@ -201,7 +218,7 @@ class _DayCell extends StatelessWidget {
           color: isToday ? colorScheme.primary.withValues(alpha: 0.10) : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           child: InkWell(
-            onTap: hasData ? onTap : null,
+            onTap: onTap,
             borderRadius: BorderRadius.circular(12),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -214,14 +231,7 @@ class _DayCell extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: hasData ? reflection!.level.color : colorScheme.surfaceContainerHighest,
-                  ),
-                ),
+                _Dot(hasData ? reflection!.level.color : colorScheme.surfaceContainerHighest),
               ],
             ),
           ),
@@ -245,11 +255,7 @@ class _Legend extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: level.color),
-              ),
+              _Dot(level.color),
               const SizedBox(width: 6),
               Text(level.label, style: theme.textTheme.labelMedium),
             ],
@@ -257,14 +263,7 @@ class _Legend extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: theme.colorScheme.surfaceContainerHighest,
-              ),
-            ),
+            _Dot(theme.colorScheme.surfaceContainerHighest),
             const SizedBox(width: 6),
             Text('Chưa có dữ liệu', style: theme.textTheme.labelMedium),
           ],
@@ -309,11 +308,7 @@ class _ReflectionDetail extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: level.color),
-                    ),
+                    _Dot(level.color),
                     const SizedBox(width: 6),
                     Text(
                       level.label,
