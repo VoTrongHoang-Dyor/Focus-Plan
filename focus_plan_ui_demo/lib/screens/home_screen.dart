@@ -7,6 +7,7 @@ import 'alarm_settings_screen.dart';
 import 'habits_screen.dart';
 import 'reflection_screen.dart';
 import 'sign_in_screen.dart';
+import 'stats_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final String email;
@@ -58,6 +59,13 @@ class HomeScreen extends StatelessWidget {
             tooltip: 'Nhìn lại',
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const ReflectionScreen()),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.emoji_events_rounded),
+            tooltip: 'Thành tích',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const StatsScreen()),
             ),
           ),
           IconButton(
