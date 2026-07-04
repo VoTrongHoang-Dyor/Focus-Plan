@@ -5,6 +5,7 @@ import '../services/session_service.dart';
 import '../widgets/schedule_timeline.dart';
 import 'alarm_settings_screen.dart';
 import 'habits_screen.dart';
+import 'reflection_screen.dart';
 import 'sign_in_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -50,6 +51,13 @@ class HomeScreen extends StatelessWidget {
             tooltip: 'Báo thức',
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const AlarmSettingsScreen()),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.calendar_month_rounded),
+            tooltip: 'Nhìn lại',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const ReflectionScreen()),
             ),
           ),
           IconButton(
