@@ -9,7 +9,7 @@ class BrandLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Image.asset(
-      'assets/images/logo.jpg',
+      'assets/images/logo.png',
       height: height,
       fit: BoxFit.contain,
       semanticLabel: 'Focus Plan',
@@ -25,15 +25,12 @@ class Mascot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(size * 0.28),
-      child: Image.asset(
-        'assets/images/mascot.png',
-        width: size,
-        height: size,
-        fit: BoxFit.contain,
-        semanticLabel: 'Linh vật Focus Plan',
-      ),
+    return Image.asset(
+      'assets/images/mascot.png',
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+      semanticLabel: 'Linh vật Focus Plan',
     );
   }
 }
