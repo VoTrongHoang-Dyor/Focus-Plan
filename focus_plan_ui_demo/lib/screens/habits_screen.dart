@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/habit.dart';
+import '../models/schedule_block.dart' show ScheduleColors;
 
 /// Màn quản lý Habit / Routine: danh sách thói quen cố định hàng ngày,
 /// nhóm theo buổi, tick trạng thái done/missed, thêm/sửa/xoá (mock, UI-only).
@@ -379,7 +380,7 @@ class _FixedBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    const color = Color(0xFF64748B); // slate 500 — màu trầm
+    const color = ScheduleColors.habit; // slate 500 — màu trầm, dùng chung với màn lịch
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
