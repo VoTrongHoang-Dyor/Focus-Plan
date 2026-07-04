@@ -23,10 +23,16 @@ class _SplashScreenState extends State<SplashScreen> {
     final loggedIn = await SessionService.isLoggedIn();
     if (!mounted) return;
     if (loggedIn) {
-      final email = await SessionService.getEmail();
+      final email = await SessionService.getEmail() ?? '';
+      final name = await SessionService.getName();
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => HomeScreen(email: email ?? '')),
+        MaterialPageRoute(
+          builder: (_) => HomeScreen(
+            email: email,
+            displayName: SessionService.displayName(name, email),
+          ),
+        ),
       );
     } else {
       Navigator.of(context).pushReplacement(

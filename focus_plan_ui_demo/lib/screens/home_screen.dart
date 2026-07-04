@@ -12,8 +12,9 @@ import 'stats_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final String email;
+  final String displayName;
 
-  const HomeScreen({super.key, required this.email});
+  const HomeScreen({super.key, required this.email, required this.displayName});
 
   static const _labels = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 
@@ -82,12 +83,31 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Expanded(
-                  child: Text('Xin chào, $email', style: Theme.of(context).textTheme.titleMedium),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Xin chào,',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      Text(
+                        displayName,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const _SpeechBubble('Hôm nay mình cùng tập trung nhé!'),
+                    ],
+                  ),
                 ),
                 const SizedBox(width: 12),
-                const Mascot(size: 48),
+                const Mascot(size: 64),
               ],
             ),
             const SizedBox(height: 16),
@@ -150,6 +170,31 @@ class HomeScreen extends StatelessWidget {
               child: ScheduleTimeline(blocks: mockSchedule),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Bong bóng thoại nhỏ của mascot cạnh lời chào.
+class _SpeechBubble extends StatelessWidget {
+  final String text;
+
+  const _SpeechBubble(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Text(
+        text,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSecondaryContainer,
         ),
       ),
     );
