@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/schedule_block.dart';
 import '../services/session_service.dart';
 import '../widgets/schedule_timeline.dart';
+import 'habits_screen.dart';
 import 'sign_in_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -36,6 +37,13 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Today'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.checklist_rounded),
+            tooltip: 'Thói quen',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const HabitsScreen()),
+            ),
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Đăng xuất',
