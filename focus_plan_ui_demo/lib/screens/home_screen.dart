@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../models/schedule_block.dart';
 import '../services/session_service.dart';
+import '../widgets/schedule_timeline.dart';
 import 'sign_in_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -27,6 +29,8 @@ class HomeScreen extends StatelessWidget {
       (i) => now.subtract(Duration(days: now.weekday % 7 - i)),
     );
     final colorScheme = Theme.of(context).colorScheme;
+    final habitCount = mockSchedule.where((b) => b.isHabit).length;
+    final taskCount = mockSchedule.length - habitCount;
 
     return Scaffold(
       appBar: AppBar(
@@ -86,19 +90,23 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            Expanded(
-              child: Center(
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(
-                      'Chưa có task nào — sẽ thêm ở slice sau',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text('Lịch hôm nay', style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(width: 8),
+                Text(
+                  '$taskCount việc · $habitCount thói quen',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
-              ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: ScheduleTimeline(blocks: mockSchedule),
             ),
           ],
         ),
