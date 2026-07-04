@@ -67,7 +67,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const BrandLogo(height: 84),
+                const BrandLogo(height: 110),
                 const SizedBox(height: 24),
                 TextFormField(
                   controller: _emailController,

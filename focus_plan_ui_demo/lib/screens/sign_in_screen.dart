@@ -61,7 +61,7 @@ class _SignInScreenState extends State<SignInScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const BrandLogo(height: 96),
+                const BrandLogo(height: 120),
                 const SizedBox(height: 24),
                 Text('Đăng nhập', style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 32),
