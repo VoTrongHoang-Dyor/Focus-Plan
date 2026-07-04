@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/habit.dart';
 import '../models/schedule_block.dart' show ScheduleColors;
+import '../widgets/brand.dart';
 
 /// Màn quản lý Habit / Routine: danh sách thói quen cố định hàng ngày,
 /// nhóm theo buổi, tick trạng thái done/missed, thêm/sửa/xoá (mock, UI-only).
@@ -422,7 +423,7 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.self_improvement_rounded, size: 64, color: colorScheme.primary),
+            const Mascot(size: 96),
             const SizedBox(height: 16),
             Text(
               'Chưa có thói quen nào',

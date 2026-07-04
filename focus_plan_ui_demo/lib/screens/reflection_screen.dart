@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/daily_reflection.dart';
+import '../widgets/brand.dart';
 
 /// Màn Daily Reflection: xem lại tóm tắt cuối ngày dạng lịch tháng (UI mock).
 class ReflectionScreen extends StatefulWidget {
@@ -32,12 +33,14 @@ class _ReflectionScreenState extends State<ReflectionScreen> {
   DailyReflection? _reflectionFor(int day) =>
       _isCurrentMonth ? mockReflections[day] : null;
 
-  void _openDetail(int day, DailyReflection reflection) {
+  void _openDay(int day, DailyReflection? reflection) {
     final date = DateTime(_visibleMonth.year, _visibleMonth.month, day);
     showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
-      builder: (_) => _ReflectionDetail(date: date, reflection: reflection),
+      builder: (_) => reflection == null
+          ? _EmptyDaySheet(date: date)
+          : _ReflectionDetail(date: date, reflection: reflection),
     );
   }
 
@@ -97,7 +100,7 @@ class _ReflectionScreenState extends State<ReflectionScreen> {
       day: day,
       reflection: reflection,
       isToday: _isCurrentMonth && day == _today.day,
-      onTap: reflection == null ? null : () => _openDetail(day, reflection),
+      onTap: () => _openDay(day, reflection),
     );
   }
 }
@@ -353,6 +356,41 @@ class _ReflectionDetail extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(reflection.note, style: theme.textTheme.bodyMedium),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Bottom sheet cho ngày chưa có dữ liệu reflection.
+class _EmptyDaySheet extends StatelessWidget {
+  final DateTime date;
+
+  const _EmptyDaySheet({required this.date});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Mascot(size: 72),
+          const SizedBox(height: 16),
+          Text(
+            'Ngày ${date.day}/${date.month}/${date.year}',
+            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Chưa có dữ liệu cho ngày này.',
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
         ],

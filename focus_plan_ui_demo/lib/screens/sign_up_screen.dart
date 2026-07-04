@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/session_service.dart';
+import '../widgets/brand.dart';
 import 'home_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -66,6 +67,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                const BrandLogo(height: 84),
+                const SizedBox(height: 24),
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,

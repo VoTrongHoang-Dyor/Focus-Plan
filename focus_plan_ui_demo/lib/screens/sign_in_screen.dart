@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/session_service.dart';
+import '../widgets/brand.dart';
 import 'home_screen.dart';
 import 'sign_up_screen.dart';
 
@@ -60,6 +61,8 @@ class _SignInScreenState extends State<SignInScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                const BrandLogo(height: 96),
+                const SizedBox(height: 24),
                 Text('Đăng nhập', style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 32),
                 TextFormField(

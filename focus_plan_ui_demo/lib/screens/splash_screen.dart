@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/session_service.dart';
+import '../widgets/brand.dart';
 import 'home_screen.dart';
 import 'sign_in_screen.dart';
 
@@ -37,7 +38,16 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            BrandLogo(height: 140),
+            SizedBox(height: 32),
+            CircularProgressIndicator(),
+          ],
+        ),
+      ),
     );
   }
 }

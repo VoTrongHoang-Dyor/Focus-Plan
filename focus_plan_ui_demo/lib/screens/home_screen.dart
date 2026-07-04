@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/schedule_block.dart';
 import '../services/session_service.dart';
+import '../widgets/brand.dart';
 import '../widgets/schedule_timeline.dart';
 import 'alarm_settings_screen.dart';
 import 'habits_screen.dart';
@@ -80,7 +81,15 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Xin chào, $email', style: Theme.of(context).textTheme.titleMedium),
+            Row(
+              children: [
+                Expanded(
+                  child: Text('Xin chào, $email', style: Theme.of(context).textTheme.titleMedium),
+                ),
+                const SizedBox(width: 12),
+                const Mascot(size: 48),
+              ],
+            ),
             const SizedBox(height: 16),
             SizedBox(
               height: 72,
