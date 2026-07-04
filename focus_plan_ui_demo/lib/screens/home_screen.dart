@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/schedule_block.dart';
 import '../services/session_service.dart';
 import '../widgets/schedule_timeline.dart';
+import 'alarm_settings_screen.dart';
 import 'habits_screen.dart';
 import 'sign_in_screen.dart';
 
@@ -42,6 +43,13 @@ class HomeScreen extends StatelessWidget {
             tooltip: 'Thói quen',
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const HabitsScreen()),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.alarm_rounded),
+            tooltip: 'Báo thức',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const AlarmSettingsScreen()),
             ),
           ),
           IconButton(
