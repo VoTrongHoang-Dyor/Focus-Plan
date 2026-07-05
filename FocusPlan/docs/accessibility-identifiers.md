@@ -37,3 +37,13 @@ mọi identifier đều tra cứu được qua `descendants(matching:.any).match
 
 Lưu ý cho automation: nút "+" thêm task (`tasklist.add-button`) thỉnh thoảng cần tap lại
 (sheet không mở lần đầu) — nên retry mở sheet + chờ `addtask.parse-button` xuất hiện.
+
+## MCP control (issue 020)
+
+AI agent điều khiển app qua các identifier trên bằng MCP server `tools/focusplan-mcp/`
+(bridge sang XCUITest driver). Cách chạy + danh sách tool: `tools/focusplan-mcp/README.md`.
+E2E proof (sign in → tạo task hoàn toàn qua MCP): `tools/focusplan-mcp/e2e-proof.mjs`.
+
+Quy tắc bắt buộc cho driver/agent: mọi thao tác lên control APP dùng identifier
+(`tap`/`type_text`/`read_element`/`wait_for`). Tool `tap_system_dialog` là escape hatch
+CHỈ cho UI hệ điều hành (vd "Lưu mật khẩu?" → "Để sau") — cấm dùng cho control trong app.
