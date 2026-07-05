@@ -23,8 +23,9 @@ const responseSchema = {
     deadline: { type: "STRING", nullable: true },
     needs_confirmation: { type: "BOOLEAN" },
     note: { type: "STRING", nullable: true },
+    task_type: { type: "STRING", enum: ["deep", "shallow"] },
   },
-  required: ["name", "priority", "needs_confirmation"],
+  required: ["name", "priority", "needs_confirmation", "task_type"],
 };
 
 serve(async (req) => {
@@ -43,6 +44,7 @@ Hôm nay là ${nowIso} (UTC). Trả về JSON đúng schema:
 - deadline: nếu câu nêu mốc thời gian ("tối nay", "ngày mai", "thứ 6") quy ra ISO8601 dựa trên hôm nay; không có để null.
 - needs_confirmation: true nếu bạn không chắc chắn ở bất kỳ trường nào.
 - note: 1 câu ngắn giải thích nếu không chắc, ngược lại null.
+- task_type: "deep" nếu là việc cần tập trung cao/sáng tạo/khó (vd học, viết, code, thiết kế); "shallow" nếu việc nhẹ/hành chính/lặp (vd trả lời tin nhắn, dọn dẹp, mua sắm). Không rõ dùng "shallow".
 Câu người dùng: """${text}"""`;
 
     const res = await fetch(
