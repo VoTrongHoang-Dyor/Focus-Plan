@@ -29,6 +29,7 @@ struct AlarmScheduler {
             content.body = p.body
             content.sound = .default
             content.categoryIdentifier = AlarmNotification.categoryId
+            content.userInfo = ["taskName": p.taskName]   // Snooze đọc tên từ đây (không parse body)
             let comps = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second],
                                                 from: p.fireDate)
             let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)

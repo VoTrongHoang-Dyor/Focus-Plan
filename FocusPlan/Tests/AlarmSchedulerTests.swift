@@ -14,7 +14,7 @@ final class AlarmSchedulerTests: XCTestCase {
     private func planned(_ taskId: UUID, _ n: Int) -> [PlannedAlarm] {
         (0..<n).map { i in PlannedAlarm(identifier: "alarm-\(taskId.uuidString)-\(i)",
             fireDate: Date(timeIntervalSince1970: TimeInterval(10_000 + i * 120)),
-            title: "T\(i)", body: "B") }
+            title: "T\(i)", body: "B", taskName: "Học") }
     }
 
     func test_arm_adds_one_request_per_planned() async {
@@ -26,6 +26,8 @@ final class AlarmSchedulerTests: XCTestCase {
                        Set((0..<6).map { "alarm-\(id.uuidString)-\($0)" }))
         // sound + category gắn đúng.
         XCTAssertEqual(fake.added.first?.content.categoryIdentifier, AlarmNotification.categoryId)
+        // tên task mang qua userInfo để Snooze khôi phục (không parse body).
+        XCTAssertEqual(fake.added.first?.content.userInfo["taskName"] as? String, "Học")
     }
 
     func test_cancel_taskId_removes_only_that_tasks_alarms() async {

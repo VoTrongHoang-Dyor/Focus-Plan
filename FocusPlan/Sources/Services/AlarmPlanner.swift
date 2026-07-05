@@ -16,7 +16,8 @@ struct AlarmPlanner {
                 identifier: "alarm-\(taskId.uuidString)-\(i)",
                 fireDate: fire,
                 title: Self.title(index: i),
-                body: Self.body(taskName: taskName))
+                body: Self.body(taskName: taskName),
+                taskName: taskName)
         }
     }
 

@@ -41,8 +41,7 @@ final class AlarmAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificatio
         switch response.actionIdentifier {
         case AlarmNotification.snoozeAction:
             await scheduler.cancel(taskId: taskId)                  // dừng chùm hiện tại
-            let name = response.notification.request.content.body
-                .replacingOccurrences(of: "Task: ", with: "")
+            let name = response.notification.request.content.userInfo["taskName"] as? String ?? ""
             let planned = AlarmPlanner().plan(taskId: taskId, taskName: name,
                 start: Date().addingTimeInterval(10 * 60), now: Date())   // arm lại từ +10'
             await scheduler.arm(planned)
