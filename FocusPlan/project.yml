@@ -50,3 +50,30 @@ targets:
         TEST_TARGET_NAME: FocusPlan
     dependencies:
       - target: FocusPlan
+  FocusPlanMcpDriver:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: McpDriver
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: "YES"
+        TEST_TARGET_NAME: FocusPlan
+    dependencies:
+      - target: FocusPlan
+schemes:
+  FocusPlan:
+    build:
+      targets:
+        FocusPlan: all
+    test:
+      targets:
+        - FocusPlanTests
+        - FocusPlanUITests
+  FocusPlanMcpDriver:
+    build:
+      targets:
+        FocusPlan: all
+    test:
+      targets:
+        - FocusPlanMcpDriver
