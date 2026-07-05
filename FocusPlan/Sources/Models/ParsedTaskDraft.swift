@@ -7,6 +7,7 @@ struct ParsedTaskDraft: Codable {
     var deadlineRaw: String?
     var needsConfirmation: Bool
     var note: String?
+    var taskType: TaskType
 
     enum CodingKeys: String, CodingKey {
         case name
@@ -15,6 +16,18 @@ struct ParsedTaskDraft: Codable {
         case deadlineRaw = "deadline"
         case needsConfirmation = "needs_confirmation"
         case note
+        case taskType = "task_type"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        name = try c.decode(String.self, forKey: .name)
+        estimatedMinutes = try c.decodeIfPresent(Int.self, forKey: .estimatedMinutes)
+        priority = try c.decode(TaskPriority.self, forKey: .priority)
+        deadlineRaw = try c.decodeIfPresent(String.self, forKey: .deadlineRaw)
+        needsConfirmation = try c.decode(Bool.self, forKey: .needsConfirmation)
+        note = try c.decodeIfPresent(String.self, forKey: .note)
+        taskType = try c.decodeIfPresent(TaskType.self, forKey: .taskType) ?? .shallow
     }
 
     /// Parse deadlineRaw (ISO8601 đầy đủ hoặc date-only) sang Date nếu được.
