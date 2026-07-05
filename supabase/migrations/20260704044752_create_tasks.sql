@@ -36,3 +36,8 @@ create policy tasks_update_own on public.tasks
 drop policy if exists tasks_delete_own on public.tasks;
 create policy tasks_delete_own on public.tasks
   for delete using (auth.uid() = user_id);
+
+-- issue 004: phân loại năng lượng cho Scheduling Engine (deep/shallow).
+alter table public.tasks
+  add column if not exists task_type text not null default 'shallow'
+  check (task_type in ('deep', 'shallow'));
