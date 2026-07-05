@@ -32,6 +32,7 @@ serve(async (req) => {
   try {
     const { text } = await req.json();
     if (!text || typeof text !== "string") return json({ error: "text required" }, 400);
+    if (text.length > 1000) return json({ error: "text_too_long" }, 400);
 
     const nowIso = new Date().toISOString();
     const prompt = `Bạn là bộ phân tích công việc. Người dùng nhập một câu tiếng Việt mô tả task.
