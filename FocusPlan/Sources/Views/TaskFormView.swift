@@ -13,6 +13,7 @@ struct TaskFormView: View {
     @State private var name = ""
     @State private var minutesText = ""
     @State private var priority: TaskPriority = .medium
+    @State private var taskType: TaskType = .shallow
     @State private var hasDeadline = false
     @State private var deadline = Date()
     @State private var note: String?
@@ -34,6 +35,11 @@ struct TaskFormView: View {
                 Section("Độ ưu tiên") {
                     Picker("Độ ưu tiên", selection: $priority) {
                         ForEach(TaskPriority.allCases) { p in Text(p.label).tag(p) }
+                    }.pickerStyle(.segmented)
+                }
+                Section("Loại việc") {
+                    Picker("Loại việc", selection: $taskType) {
+                        ForEach(TaskType.allCases) { t in Text(t.label).tag(t) }
                     }.pickerStyle(.segmented)
                 }
                 Section {
@@ -65,12 +71,14 @@ struct TaskFormView: View {
             name = d.name
             minutesText = d.estimatedMinutes.map(String.init) ?? ""
             priority = d.priority
+            taskType = d.taskType
             note = d.note
             if let dd = d.deadlineDate { hasDeadline = true; deadline = dd }
         case .edit(let t):
             name = t.name
             minutesText = t.estimatedMinutes.map(String.init) ?? ""
             priority = t.priority
+            taskType = t.taskType
             if let dd = t.deadline { hasDeadline = true; deadline = dd }
         }
     }
@@ -83,9 +91,9 @@ struct TaskFormView: View {
         do {
             switch mode {
             case .create:
-                _ = try await repo.create(NewTask(name: trimmedName, estimatedMinutes: minutes, priority: priority, deadline: dl))
+                _ = try await repo.create(NewTask(name: trimmedName, estimatedMinutes: minutes, priority: priority, deadline: dl, taskType: taskType))
             case .edit(let t):
-                _ = try await repo.update(id: t.id, TaskUpdate(name: trimmedName, estimatedMinutes: minutes, priority: priority, deadline: dl))
+                _ = try await repo.update(id: t.id, TaskUpdate(name: trimmedName, estimatedMinutes: minutes, priority: priority, deadline: dl, taskType: taskType))
             }
             onSaved(); dismiss()
         } catch { errorMessage = error.localizedDescription }
