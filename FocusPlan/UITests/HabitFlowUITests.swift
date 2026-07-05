@@ -81,23 +81,34 @@ final class HabitFlowUITests: XCTestCase {
         typeInto(app.textFields["Email"], email)
         pasteInto(app.secureTextFields["Mật khẩu"], password)
         app.buttons["Đăng nhập"].tap()
-        dismissSavePasswordDialog()
+        // Dialog "Lưu mật khẩu?" xuất hiện sau vài giây → poll để bắt và tắt.
+        for _ in 0..<8 { if dismissSavePasswordDialog() { break }; Thread.sleep(forTimeInterval: 1) }
     }
 
-    /// Sau khi đăng nhập, iOS bật dialog hệ thống "Lưu mật khẩu?" (springboard) che UI
-    /// → chặn tap tab. Bấm "Để sau" để bỏ qua.
-    private func dismissSavePasswordDialog() {
+    /// Sau khi đăng nhập, iOS bật dialog modal "Lưu mật khẩu?" che UI → chặn tap tab.
+    /// Trên iOS mới (26) dialog nằm trong app hierarchy (không phải springboard) nên tìm
+    /// nút "Để sau" ở app trước rồi mới fallback springboard. Tap-if-present, trả true nếu tắt.
+    @discardableResult
+    private func dismissSavePasswordDialog() -> Bool {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         for label in ["Để sau", "Not Now", "Lúc khác"] {
-            let btn = springboard.buttons[label]
-            if btn.waitForExistence(timeout: 5) { btn.tap(); return }
+            let appBtn = app.buttons[label]
+            if appBtn.exists { appBtn.tap(); return true }
+            let sbBtn = springboard.buttons[label]
+            if sbBtn.exists { sbBtn.tap(); return true }
         }
+        return false
     }
 
     private func openHabitsTab() {
         let tab = app.tabBars.buttons["Thói quen"]
         XCTAssertTrue(tab.waitForExistence(timeout: 20), "Không thấy tab Thói quen (chưa vào MainTabView?)")
-        tab.tap()
+        // Tắt dialog phòng khi còn che rồi tap tab (retry đến khi vào màn Thói quen).
+        for _ in 0..<3 {
+            dismissSavePasswordDialog()
+            tab.tap()
+            if app.navigationBars["Thói quen"].waitForExistence(timeout: 5) { break }
+        }
     }
 
     func test_habit_shows_and_checklist_persists() {
