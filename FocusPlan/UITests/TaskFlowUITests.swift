@@ -1,11 +1,12 @@
 import XCTest
 import UIKit
 
-/// QA in-app cho issue 002 (phần KHÔNG cần Edge Function):
-/// - Seed 1 user + 1 task qua REST (anon key public), rồi đăng nhập app và xác nhận
-///   task hiển thị trong danh sách → chứng minh TaskRepository.fetchAll decode được
-///   TaskItem (gồm timestamptz created_at/deadline) và TaskListView render đúng.
-/// Criteria 1 (NL parse) cần Edge Function deploy → QA riêng sau khi deploy.
+/// QA in-app cho issue 002:
+/// - test_signedInUser_seesSeededTask: seed user + task qua REST → login → task hiển thị
+///   trong list → TaskRepository.fetchAll decode TaskItem (timestamptz) + render đúng.
+/// - test_naturalLanguageParse_createsTask: criteria 1 — nhập câu NL → parse (Gemini mock
+///   qua seam UITEST_MOCK_PARSE_DRAFT) → màn confirm → lưu THẬT vào Supabase → list.
+/// - test_taskList_isolatedBetweenUsers: criteria 4 — task user A không rò sang user B (RLS).
 final class TaskFlowUITests: XCTestCase {
 
     private let app = XCUIApplication(bundleIdentifier: "com.votronghoang.focusplan")
@@ -40,8 +41,8 @@ final class TaskFlowUITests: XCTestCase {
     }
 
     private func seedUser() -> (email: String, token: String) {
-        let ts = Int(Date().timeIntervalSince1970)
-        let email = "qaseed\(ts)@gmail.com"
+        // Unique per-call (không chỉ per-second) để 2 lần seed liên tiếp không trùng email.
+        let email = "qaseed\(Int(Date().timeIntervalSince1970))_\(UInt32.random(in: 0 ..< 1_000_000))@gmail.com"
         let signup = postJSON("/auth/v1/signup", body: ["email": email, "password": password], bearer: anonKey)
         let token = signup?["access_token"] as? String
         XCTAssertNotNil(token, "Seed: signup không trả access_token (Confirm email phải TẮT)")
@@ -170,5 +171,30 @@ final class TaskFlowUITests: XCTestCase {
                       "Task đã seed không hiện trong danh sách (decode/list lỗi)")
         // priority label tiếng Việt hiển thị
         XCTAssertTrue(app.staticTexts["Cao"].exists, "Không thấy nhãn priority 'Cao'")
+    }
+
+    /// Criteria 4: RLS isolation — task của user A KHÔNG rò sang user B.
+    func test_taskList_isolatedBetweenUsers() {
+        let taskNameA = "Task riêng A \(Int(Date().timeIntervalSince1970))"
+        _ = seedUserAndTask(taskName: taskNameA)   // user A + 1 task
+        let emailB = seedUser().email               // user B, không task
+
+        app.launch()
+        let logout = app.buttons["Đăng xuất"]
+        if logout.waitForExistence(timeout: 5) { logout.tap() }
+
+        let goSignIn = app.buttons["Chưa có tài khoản? Tạo tài khoản"]
+        XCTAssertTrue(goSignIn.waitForExistence(timeout: 10), "Chưa tới màn SignIn")
+        typeInto(app.textFields["Email"], emailB)
+        pasteInto(app.secureTextFields["Mật khẩu"], password)
+        app.buttons["Đăng nhập"].tap()
+        for _ in 0..<8 { if dismissSavePasswordDialog() { break }; Thread.sleep(forTimeInterval: 1) }
+
+        // Chờ list user B load xong (empty-state hiện) → fetchAll đã trả về (0 row).
+        XCTAssertTrue(app.staticTexts["Chưa có task nào — thêm bằng nút +"].waitForExistence(timeout: 20),
+                      "List user B chưa load xong")
+        // RLS scope theo auth.uid(): task của A không được hiện cho B.
+        XCTAssertFalse(app.staticTexts[taskNameA].exists,
+                       "Rò dữ liệu chéo: user B thấy task của user A")
     }
 }
