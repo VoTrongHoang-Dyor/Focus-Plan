@@ -19,18 +19,23 @@ struct SignUpView: View {
                     .keyboardType(.emailAddress)
                     .autocorrectionDisabled()
                     .textFieldStyle(.roundedBorder)
+                    .accessibilityIdentifier(A11yID.SignUp.emailField)
 
                 SecureField("Mật khẩu", text: $password)
                     .textFieldStyle(.roundedBorder)
+                    .accessibilityIdentifier(A11yID.SignUp.passwordField)
 
                 SecureField("Xác nhận mật khẩu", text: $confirm)
                     .textFieldStyle(.roundedBorder)
+                    .accessibilityIdentifier(A11yID.SignUp.confirmPasswordField)
 
                 if let msg = validationError ?? auth.errorMessage {
                     Text(msg).foregroundStyle(.red).font(.footnote)
+                        .accessibilityIdentifier(A11yID.SignUp.errorText)
                 }
                 if let info = infoMessage {
                     Text(info).foregroundStyle(.green).font(.footnote)
+                        .accessibilityIdentifier(A11yID.SignUp.infoText)
                 }
 
                 Button {
@@ -41,9 +46,11 @@ struct SignUpView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(isSubmitting)
+                .accessibilityIdentifier(A11yID.SignUp.submitButton)
 
                 Button("Đã có tài khoản? Đăng nhập", action: onBack)
                     .frame(maxWidth: .infinity)
+                    .accessibilityIdentifier(A11yID.SignUp.goToSignInButton)
 
                 Spacer()
             }

@@ -21,12 +21,15 @@ struct SignInView: View {
                     .keyboardType(.emailAddress)
                     .autocorrectionDisabled()
                     .textFieldStyle(.roundedBorder)
+                    .accessibilityIdentifier(A11yID.SignIn.emailField)
 
                 SecureField("Mật khẩu", text: $password)
                     .textFieldStyle(.roundedBorder)
+                    .accessibilityIdentifier(A11yID.SignIn.passwordField)
 
                 if let msg = validationError ?? auth.errorMessage {
                     Text(msg).foregroundStyle(.red).font(.footnote)
+                        .accessibilityIdentifier(A11yID.SignIn.errorText)
                 }
 
                 Button {
@@ -37,9 +40,11 @@ struct SignInView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(isSubmitting)
+                .accessibilityIdentifier(A11yID.SignIn.submitButton)
 
                 Button("Chưa có tài khoản? Tạo tài khoản", action: onTapCreateAccount)
                     .frame(maxWidth: .infinity)
+                    .accessibilityIdentifier(A11yID.SignIn.goToSignUpButton)
 
                 Spacer()
             }

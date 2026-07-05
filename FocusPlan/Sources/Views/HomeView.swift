@@ -21,6 +21,7 @@ struct HomeView: View {
                 Text("Xin chào, \(email)").font(.headline)
                     .lineLimit(1)
                     .truncationMode(.tail)
+                    .accessibilityIdentifier(A11yID.Home.greetingText)
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
@@ -42,6 +43,7 @@ struct HomeView: View {
                         Image(systemName: "rectangle.portrait.and.arrow.right")
                     }
                     .accessibilityLabel("Đăng xuất")
+                    .accessibilityIdentifier(A11yID.Home.signOutButton)
                 }
             }
         }
