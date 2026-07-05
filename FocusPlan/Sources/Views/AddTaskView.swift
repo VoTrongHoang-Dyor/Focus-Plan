@@ -17,7 +17,9 @@ struct AddTaskView: View {
                 Text("Nhập task bằng câu tự nhiên").font(.headline)
                 TextField("vd: Học tiếng Trung 30 phút tối nay", text: $text, axis: .vertical)
                     .textFieldStyle(.roundedBorder).lineLimit(2...4)
-                if let errorMessage { Text(errorMessage).foregroundStyle(.red).font(.footnote) }
+                    .accessibilityIdentifier(A11yID.AddTask.inputField)
+                if let errorMessage { Text(errorMessage).foregroundStyle(.red).font(.footnote)
+                    .accessibilityIdentifier(A11yID.AddTask.errorText) }
                 Button {
                     Task { await parse() }
                 } label: {
@@ -26,13 +28,17 @@ struct AddTaskView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(isParsing || text.trimmingCharacters(in: .whitespaces).isEmpty)
+                .accessibilityIdentifier(A11yID.AddTask.parseButton)
                 Spacer()
             }
             .padding(24)
             .navigationTitle("Thêm task")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Huỷ") { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Huỷ") { dismiss() }
+                        .accessibilityIdentifier(A11yID.AddTask.cancelButton)
+                }
             }
             .sheet(item: $draft) { d in
                 // Luôn qua màn confirm trước khi lưu (acceptance criteria 3).

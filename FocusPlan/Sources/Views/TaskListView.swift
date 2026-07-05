@@ -16,11 +16,13 @@ struct TaskListView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+                .accessibilityIdentifier(A11yID.TaskList.emptyState)
             } else {
                 List {
                     ForEach(vm.tasks) { task in
                         Button { editingTask = task } label: { row(task) }
                             .buttonStyle(.plain)
+                            .accessibilityIdentifier(A11yID.TaskList.row(task.id))
                     }
                     .onDelete { indexSet in
                         let targets = indexSet.map { vm.tasks[$0] }
@@ -37,6 +39,7 @@ struct TaskListView: View {
             }
             .padding(24)
             .accessibilityLabel("Thêm task")
+            .accessibilityIdentifier(A11yID.TaskList.addButton)
         }
         .task { await vm.load() }
         .sheet(isPresented: $showingAdd) {

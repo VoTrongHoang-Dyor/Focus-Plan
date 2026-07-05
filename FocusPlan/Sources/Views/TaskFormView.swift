@@ -26,37 +26,51 @@ struct TaskFormView: View {
         NavigationStack {
             Form {
                 if let note, !note.isEmpty {
-                    Section { Text(note).font(.footnote).foregroundStyle(.orange) }
+                    Section { Text(note).font(.footnote).foregroundStyle(.orange)
+                        .accessibilityIdentifier(A11yID.TaskForm.noteText) }
                 }
-                Section("Tên task") { TextField("Tên", text: $name) }
+                Section("Tên task") {
+                    TextField("Tên", text: $name)
+                        .accessibilityIdentifier(A11yID.TaskForm.nameField)
+                }
                 Section("Thời lượng (phút)") {
                     TextField("vd 30", text: $minutesText).keyboardType(.numberPad)
+                        .accessibilityIdentifier(A11yID.TaskForm.minutesField)
                 }
                 Section("Độ ưu tiên") {
                     Picker("Độ ưu tiên", selection: $priority) {
                         ForEach(TaskPriority.allCases) { p in Text(p.label).tag(p) }
                     }.pickerStyle(.segmented)
+                        .accessibilityIdentifier(A11yID.TaskForm.priorityPicker)
                 }
                 Section("Loại việc") {
                     Picker("Loại việc", selection: $taskType) {
                         ForEach(TaskType.allCases) { t in Text(t.label).tag(t) }
                     }.pickerStyle(.segmented)
+                        .accessibilityIdentifier(A11yID.TaskForm.taskTypePicker)
                 }
                 Section {
                     Toggle("Có deadline", isOn: $hasDeadline)
+                        .accessibilityIdentifier(A11yID.TaskForm.deadlineToggle)
                     if hasDeadline {
                         DatePicker("Deadline", selection: $deadline)
+                            .accessibilityIdentifier(A11yID.TaskForm.deadlinePicker)
                     }
                 }
-                if let errorMessage { Text(errorMessage).foregroundStyle(.red).font(.footnote) }
+                if let errorMessage { Text(errorMessage).foregroundStyle(.red).font(.footnote)
+                    .accessibilityIdentifier(A11yID.TaskForm.errorText) }
             }
             .navigationTitle(isEditing ? "Sửa task" : "Xác nhận task")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Huỷ") { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Huỷ") { dismiss() }
+                        .accessibilityIdentifier(A11yID.TaskForm.cancelButton)
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(isEditing ? "Lưu" : "Tạo") { Task { await save() } }
                         .disabled(isSaving || name.trimmingCharacters(in: .whitespaces).isEmpty)
+                        .accessibilityIdentifier(A11yID.TaskForm.saveButton)
                 }
             }
             .onAppear(perform: prefill)
