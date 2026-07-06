@@ -24,45 +24,66 @@ struct TaskFormView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                if let note, !note.isEmpty {
-                    Section { Text(note).font(.footnote).foregroundStyle(.orange)
-                        .accessibilityIdentifier(A11yID.TaskForm.noteText) }
-                }
-                Section("Tên task") {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    if let note, !note.isEmpty {
+                        Text(note).font(.footnote).foregroundStyle(.orange)
+                            .accessibilityIdentifier(A11yID.TaskForm.noteText)
+                    }
+
+                    fieldLabel("Tên task")
                     TextField("Tên", text: $name)
+                        .filledFieldStyle()
                         .accessibilityIdentifier(A11yID.TaskForm.nameField)
-                }
-                .listRowBackground(Theme.surfaceVariant)
-                Section("Thời lượng (phút)") {
+
+                    fieldLabel("Thời lượng (phút)")
                     TextField("vd 30", text: $minutesText).keyboardType(.numberPad)
+                        .filledFieldStyle()
                         .accessibilityIdentifier(A11yID.TaskForm.minutesField)
-                }
-                .listRowBackground(Theme.surfaceVariant)
-                Section("Độ ưu tiên") {
+
+                    fieldLabel("Độ ưu tiên")
                     Picker("Độ ưu tiên", selection: $priority) {
                         ForEach(TaskPriority.allCases) { p in Text(p.label).tag(p) }
-                    }.pickerStyle(.segmented)
-                        .accessibilityIdentifier(A11yID.TaskForm.priorityPicker)
-                }
-                Section("Loại việc") {
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(8)
+                    .background(Theme.surfaceVariant, in: RoundedRectangle(cornerRadius: Theme.radiusInput))
+                    .accessibilityIdentifier(A11yID.TaskForm.priorityPicker)
+
+                    fieldLabel("Loại việc")
                     Picker("Loại việc", selection: $taskType) {
                         ForEach(TaskType.allCases) { t in Text(t.label).tag(t) }
-                    }.pickerStyle(.segmented)
-                        .accessibilityIdentifier(A11yID.TaskForm.taskTypePicker)
-                }
-                Section {
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(8)
+                    .background(Theme.surfaceVariant, in: RoundedRectangle(cornerRadius: Theme.radiusInput))
+                    .accessibilityIdentifier(A11yID.TaskForm.taskTypePicker)
+
                     Toggle("Có deadline", isOn: $hasDeadline)
+                        .filledFieldStyle()
                         .accessibilityIdentifier(A11yID.TaskForm.deadlineToggle)
                     if hasDeadline {
                         DatePicker("Deadline", selection: $deadline)
+                            .filledFieldStyle()
                             .accessibilityIdentifier(A11yID.TaskForm.deadlinePicker)
                     }
+
+                    if let errorMessage { Text(errorMessage).foregroundStyle(.red).font(.footnote)
+                        .accessibilityIdentifier(A11yID.TaskForm.errorText) }
+
+                    Button {
+                        Task { await save() }
+                    } label: {
+                        if isSaving { ProgressView().tint(.white).frame(maxWidth: .infinity) }
+                        else { Text(isEditing ? "Lưu" : "Tạo").font(.headline).frame(maxWidth: .infinity) }
+                    }
+                    .authCTAStyle()
+                    .disabled(isSaving || name.trimmingCharacters(in: .whitespaces).isEmpty)
+                    .accessibilityIdentifier(A11yID.TaskForm.saveButton)
+                    .padding(.top, 8)
                 }
-                if let errorMessage { Text(errorMessage).foregroundStyle(.red).font(.footnote)
-                    .accessibilityIdentifier(A11yID.TaskForm.errorText) }
+                .padding(24)
             }
-            .tint(Theme.primary)
             .navigationTitle(isEditing ? "Sửa task" : "Xác nhận task")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -70,14 +91,13 @@ struct TaskFormView: View {
                     Button("Huỷ") { dismiss() }
                         .accessibilityIdentifier(A11yID.TaskForm.cancelButton)
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(isEditing ? "Lưu" : "Tạo") { Task { await save() } }
-                        .disabled(isSaving || name.trimmingCharacters(in: .whitespaces).isEmpty)
-                        .accessibilityIdentifier(A11yID.TaskForm.saveButton)
-                }
             }
             .onAppear(perform: prefill)
         }
+    }
+
+    private func fieldLabel(_ text: String) -> some View {
+        Text(text).font(.caption).foregroundStyle(Theme.onSurfaceVariant)
     }
 
     private var isEditing: Bool { if case .edit = mode { return true }; return false }

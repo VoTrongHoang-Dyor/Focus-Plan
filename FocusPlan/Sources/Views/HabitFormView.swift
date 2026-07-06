@@ -16,30 +16,45 @@ struct HabitFormView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Tên thói quen") { TextField("vd Thiền", text: $name) }
-                    .listRowBackground(Theme.surfaceVariant)
-                Section("Giờ cố định") {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    fieldLabel("Tên thói quen")
+                    TextField("vd Thiền", text: $name)
+                        .filledFieldStyle()
+
+                    fieldLabel("Giờ cố định")
                     DatePicker("Giờ", selection: $time, displayedComponents: .hourAndMinute)
-                }
-                Section("Thời lượng (phút)") {
+                        .filledFieldStyle()
+
+                    fieldLabel("Thời lượng (phút)")
                     TextField("30", text: $durationText).keyboardType(.numberPad)
+                        .filledFieldStyle()
+
+                    if let errorMessage { Text(errorMessage).foregroundStyle(.red).font(.footnote) }
+
+                    Button {
+                        Task { await save() }
+                    } label: {
+                        if isSaving { ProgressView().tint(.white).frame(maxWidth: .infinity) }
+                        else { Text(isEditing ? "Lưu" : "Tạo").font(.headline).frame(maxWidth: .infinity) }
+                    }
+                    .authCTAStyle()
+                    .disabled(isSaving || name.trimmingCharacters(in: .whitespaces).isEmpty)
+                    .padding(.top, 8)
                 }
-                .listRowBackground(Theme.surfaceVariant)
-                if let errorMessage { Text(errorMessage).foregroundStyle(.red).font(.footnote) }
+                .padding(24)
             }
-            .tint(Theme.primary)
             .navigationTitle(isEditing ? "Sửa thói quen" : "Thói quen mới")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Huỷ") { dismiss() } }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(isEditing ? "Lưu" : "Tạo") { Task { await save() } }
-                        .disabled(isSaving || name.trimmingCharacters(in: .whitespaces).isEmpty)
-                }
             }
             .onAppear(perform: prefill)
         }
+    }
+
+    private func fieldLabel(_ text: String) -> some View {
+        Text(text).font(.caption).foregroundStyle(Theme.onSurfaceVariant)
     }
 
     private var isEditing: Bool { if case .edit = mode { return true }; return false }
