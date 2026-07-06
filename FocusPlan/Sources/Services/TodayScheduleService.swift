@@ -19,7 +19,9 @@ final class TodayScheduleService {
         let byId = Dictionary(tasks.map { ($0.id, $0.name) }, uniquingKeysWith: { a, _ in a })
         let items = Self.futureItems(scheduled: result.scheduled, names: byId, now: now)
         let planned = AlarmPlanner().planMany(items, now: now)
-        await scheduler.arm(planned, calendar: calendar)
+        let userAlarms = UserAlarmPlanner()
+            .plannedAlarms(for: UserAlarmStore().load(), now: now, calendar: calendar)
+        await scheduler.arm(planned + userAlarms, calendar: calendar)
     }
 
     /// Chỉ giữ task CHƯA bắt đầu (start > now). Task đã bắt đầu (start ≤ now) là chùm
