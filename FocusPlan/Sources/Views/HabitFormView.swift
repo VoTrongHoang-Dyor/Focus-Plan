@@ -18,14 +18,17 @@ struct HabitFormView: View {
         NavigationStack {
             Form {
                 Section("Tên thói quen") { TextField("vd Thiền", text: $name) }
+                    .listRowBackground(Theme.surfaceVariant)
                 Section("Giờ cố định") {
                     DatePicker("Giờ", selection: $time, displayedComponents: .hourAndMinute)
                 }
                 Section("Thời lượng (phút)") {
                     TextField("30", text: $durationText).keyboardType(.numberPad)
                 }
+                .listRowBackground(Theme.surfaceVariant)
                 if let errorMessage { Text(errorMessage).foregroundStyle(.red).font(.footnote) }
             }
+            .tint(Theme.primary)
             .navigationTitle(isEditing ? "Sửa thói quen" : "Thói quen mới")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
