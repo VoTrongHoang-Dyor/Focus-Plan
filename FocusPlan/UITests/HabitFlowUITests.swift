@@ -124,6 +124,10 @@ final class HabitFlowUITests: XCTestCase {
             XCTFail("Habit đã seed không hiện. habitId=\(habitId) token?=\(!token.isEmpty) alert=[\(alertMsg)]")
         }
 
+        // Criteria 1b (issue 025): habit 06:00 nằm trong section "Buổi sáng".
+        XCTAssertTrue(app.staticTexts["Buổi sáng"].waitForExistence(timeout: 5),
+                      "Không thấy section header 'Buổi sáng' — grouping theo buổi chưa render")
+
         // Criteria 2: tap done → ghi xuống Supabase.
         let doneBtn = app.buttons["Đánh dấu hoàn thành"].firstMatch
         XCTAssertTrue(doneBtn.waitForExistence(timeout: 5))

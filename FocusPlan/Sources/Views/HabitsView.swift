@@ -22,13 +22,22 @@ struct HabitsView: View {
                         .listRowInsets(EdgeInsets())
                         .listRowBackground(Color.clear)
 
-                        Section {
-                            ForEach(vm.habits) { habit in
-                                row(habit)
-                            }
-                            .onDelete { idx in
-                                let targets = idx.map { vm.habits[$0] }
-                                Task { for h in targets { await vm.delete(h) } }
+                        ForEach(DayPart.allCases, id: \.self) { part in
+                            let items = habits(in: part)
+                            if !items.isEmpty {
+                                Section {
+                                    ForEach(items) { habit in
+                                        row(habit)
+                                    }
+                                    .onDelete { idx in
+                                        let targets = idx.map { items[$0] }
+                                        Task { for h in targets { await vm.delete(h) } }
+                                    }
+                                } header: {
+                                    Label(part.label, systemImage: part.icon)
+                                        .font(.subheadline.weight(.semibold))
+                                        .foregroundStyle(Theme.onSurfaceVariant)
+                                }
                             }
                         }
                     }
@@ -79,6 +88,11 @@ struct HabitsView: View {
         }
         .padding(32)
         .frame(maxWidth: .infinity)
+    }
+
+    /// Habit thuộc buổi `part`, sort giờ tăng dần ("HH:mm:ss" so chuỗi = so giờ).
+    private func habits(in part: DayPart) -> [Habit] {
+        vm.habits.filter { $0.dayPart == part }.sorted { $0.timeOfDay < $1.timeOfDay }
     }
 
     @ViewBuilder
