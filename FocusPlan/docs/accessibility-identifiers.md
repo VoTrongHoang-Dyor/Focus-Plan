@@ -38,6 +38,24 @@ mọi identifier đều tra cứu được qua `descendants(matching:.any).match
 Lưu ý cho automation: nút "+" thêm task (`tasklist.add-button`) thỉnh thoảng cần tap lại
 (sheet không mở lần đầu) — nên retry mở sheet + chờ `addtask.parse-button` xuất hiện.
 
+### AlarmForm (issue 021)
+
+Đo bằng `AlarmFlowUITests`. Entry point: `home.alarm-button` mở sheet `AlarmFormView`.
+
+| Identifier | XCUIElement type | Query |
+|---|---|---|
+| `home.alarm-button` | button | `app.buttons[id]` |
+| `alarmform.time-text` | button | `app.buttons[id]` |
+| `alarmform.time-picker` | datePicker | `app.datePickers[id]` |
+| `alarmform.day-toggle-{1…7}` (1=CN … 7=T7) | button | `app.buttons[id]`; trạng thái chọn qua `isSelected` |
+| `alarmform.loop-audio-toggle` | switch | `app.switches[id]` |
+| `alarmform.vibrate-toggle` | switch | `app.switches[id]` |
+| `alarmform.volume-max-toggle` | switch | `app.switches[id]` |
+| `alarmform.show-notification-toggle` | switch | `app.switches[id]` |
+| `alarmform.create-button` | button | `app.buttons[id]` |
+| `alarmform.cancel-button` | button | `app.buttons[id]` |
+| `alarmform.hint-text` | staticText | `app.staticTexts[id]` |
+
 ## MCP control (issue 020)
 
 AI agent điều khiển app qua các identifier trên bằng MCP server `tools/focusplan-mcp/`
