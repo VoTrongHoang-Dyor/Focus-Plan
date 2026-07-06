@@ -25,6 +25,9 @@ struct HabitFormView: View {
                     fieldLabel("Giờ cố định")
                     DatePicker("Giờ", selection: $time, displayedComponents: .hourAndMinute)
                         .filledFieldStyle()
+                    Label(derivedDayPart.label, systemImage: derivedDayPart.icon)
+                        .font(.caption)
+                        .foregroundStyle(Theme.onSurfaceVariant)
 
                     fieldLabel("Thời lượng (phút)")
                     TextField("30", text: $durationText).keyboardType(.numberPad)
@@ -58,6 +61,11 @@ struct HabitFormView: View {
     }
 
     private var isEditing: Bool { if case .edit = mode { return true }; return false }
+
+    /// Buổi derive live từ giờ đang chọn — cùng rule DayPart.from(hour:) với HabitsView.
+    private var derivedDayPart: DayPart {
+        DayPart.from(hour: Calendar.current.component(.hour, from: time))
+    }
 
     private func prefill() {
         if case .edit(let h) = mode {
