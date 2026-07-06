@@ -20,10 +20,14 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Xin chào, \(email)").font(.headline)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-                    .accessibilityIdentifier(A11yID.Home.greetingText)
+                HStack(alignment: .center, spacing: 12) {
+                    Text("Xin chào, \(email)").font(.headline)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .accessibilityIdentifier(A11yID.Home.greetingText)
+                    Spacer()
+                    MascotView(size: 64)
+                }
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
