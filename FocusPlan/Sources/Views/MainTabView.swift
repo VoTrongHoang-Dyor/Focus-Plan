@@ -11,5 +11,6 @@ struct MainTabView: View {
             HabitsView()
                 .tabItem { Label("Thói quen", systemImage: "repeat") }
         }
+        .tint(Theme.primary)
     }
 }

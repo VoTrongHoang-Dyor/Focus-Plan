@@ -5,6 +5,7 @@ struct HomeView: View {
     let email: String
 
     @State private var showAlarmForm = false
+    @State private var taskCount = 0
 
     private let labels = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"]
 
@@ -21,10 +22,16 @@ struct HomeView: View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 16) {
                 HStack(alignment: .center, spacing: 12) {
-                    Text("Xin chào, \(email)").font(.headline)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                        .accessibilityIdentifier(A11yID.Home.greetingText)
+                    VStack(alignment: .leading, spacing: 4) {
+                        // 1 Text node (concat) để giữ nguyên hành vi UITest cũ (AuthFlowUITests
+                        // định vị bằng predicate `label BEGINSWITH "Xin chào,"` trên staticText đơn).
+                        (Text("Xin chào,\n").font(.subheadline).foregroundColor(Theme.onSurfaceVariant)
+                            + Text(email).font(.title2.weight(.bold)))
+                            .lineLimit(2)
+                            .truncationMode(.tail)
+                            .accessibilityIdentifier(A11yID.Home.greetingText)
+                        SpeechBubble("Hôm nay mình cùng tập trung nhé!")
+                    }
                     Spacer()
                     MascotView(size: 64)
                 }
@@ -37,7 +44,14 @@ struct HomeView: View {
                     }
                 }
 
-                TaskListView()
+                HStack(alignment: .lastTextBaseline, spacing: 8) {
+                    Text("Lịch hôm nay").font(.title3.weight(.semibold))
+                    Text("\(taskCount) việc")
+                        .font(.caption)
+                        .foregroundStyle(Theme.onSurfaceVariant)
+                }
+
+                TaskListView(onCountChange: { taskCount = $0 })
             }
             .padding(16)
             .navigationTitle("Today")
@@ -72,11 +86,28 @@ struct HomeView: View {
         let weekdayIndex = cal.component(.weekday, from: day) - 1
         VStack(spacing: 4) {
             Text(labels[weekdayIndex]).font(.caption)
+                .foregroundStyle(isToday ? Color.white : Theme.onSurfaceVariant)
             Text("\(cal.component(.day, from: day))").bold()
+                .foregroundStyle(isToday ? Color.white : Color.primary)
         }
         .frame(width: 48, height: 64)
-        .background(isToday ? Color.accentColor : Color(.secondarySystemBackground),
-                    in: RoundedRectangle(cornerRadius: 16))
-        .foregroundStyle(isToday ? Color.white : Color.primary)
+        .background(isToday ? Theme.primary : Theme.surfaceVariant,
+                    in: RoundedRectangle(cornerRadius: Theme.radiusChip))
+    }
+}
+
+/// Bong bóng thoại nhỏ cạnh lời chào — port từ `home_screen.dart` `_SpeechBubble`.
+private struct SpeechBubble: View {
+    let text: String
+
+    init(_ text: String) { self.text = text }
+
+    var body: some View {
+        Text(text)
+            .font(.caption)
+            .foregroundStyle(Theme.onPrimaryContainer)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(Theme.secondaryContainer, in: RoundedRectangle(cornerRadius: 14))
     }
 }

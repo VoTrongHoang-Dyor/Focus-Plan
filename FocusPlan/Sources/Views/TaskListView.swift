@@ -4,6 +4,8 @@ struct TaskListView: View {
     @StateObject private var vm = TaskListViewModel()
     @State private var showingAdd = false
     @State private var editingTask: TaskItem?
+    /// Cho HomeView hiển thị đếm "X việc" phía trên list — không đổi hành vi list.
+    var onCountChange: ((Int) -> Void)?
 
     var body: some View {
         Group {
@@ -42,6 +44,7 @@ struct TaskListView: View {
             .accessibilityIdentifier(A11yID.TaskList.addButton)
         }
         .task { await vm.load() }
+        .onChange(of: vm.tasks.count) { _, count in onCountChange?(count) }
         .sheet(isPresented: $showingAdd) {
             AddTaskView(onSaved: { Task { await vm.load() } })
         }
