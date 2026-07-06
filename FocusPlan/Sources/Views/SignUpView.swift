@@ -13,48 +13,62 @@ struct SignUpView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 16) {
-                TextField("Email", text: $email)
-                    .textInputAutocapitalization(.never)
-                    .keyboardType(.emailAddress)
-                    .autocorrectionDisabled()
-                    .textFieldStyle(.roundedBorder)
-                    .accessibilityIdentifier(A11yID.SignUp.emailField)
+            ScrollView {
+                VStack(spacing: 16) {
+                    Image("BrandLogo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 110)
 
-                SecureField("Mật khẩu", text: $password)
-                    .textFieldStyle(.roundedBorder)
-                    .accessibilityIdentifier(A11yID.SignUp.passwordField)
+                    Text("Tạo tài khoản để bắt đầu")
+                        .font(.subheadline)
+                        .foregroundStyle(Theme.onSurfaceVariant)
+                        .padding(.bottom, 8)
 
-                SecureField("Xác nhận mật khẩu", text: $confirm)
-                    .textFieldStyle(.roundedBorder)
-                    .accessibilityIdentifier(A11yID.SignUp.confirmPasswordField)
+                    AuthField(icon: "envelope") {
+                        TextField("Email", text: $email)
+                            .textInputAutocapitalization(.never)
+                            .keyboardType(.emailAddress)
+                            .autocorrectionDisabled()
+                            .accessibilityIdentifier(A11yID.SignUp.emailField)
+                    }
+                    AuthField(icon: "lock") {
+                        SecureField("Mật khẩu", text: $password)
+                            .accessibilityIdentifier(A11yID.SignUp.passwordField)
+                    }
+                    AuthField(icon: "lock.shield") {
+                        SecureField("Xác nhận mật khẩu", text: $confirm)
+                            .accessibilityIdentifier(A11yID.SignUp.confirmPasswordField)
+                    }
 
-                if let msg = validationError ?? auth.errorMessage {
-                    Text(msg).foregroundStyle(.red).font(.footnote)
-                        .accessibilityIdentifier(A11yID.SignUp.errorText)
+                    if let msg = validationError ?? auth.errorMessage {
+                        Text(msg).foregroundStyle(.red).font(.footnote)
+                            .accessibilityIdentifier(A11yID.SignUp.errorText)
+                    }
+                    if let info = infoMessage {
+                        Text(info).foregroundStyle(.green).font(.footnote)
+                            .accessibilityIdentifier(A11yID.SignUp.infoText)
+                    }
+
+                    Button {
+                        Task { await submit() }
+                    } label: {
+                        if isSubmitting {
+                            ProgressView().tint(.white).frame(maxWidth: .infinity)
+                        } else {
+                            Text("Tạo tài khoản").font(.headline).frame(maxWidth: .infinity)
+                        }
+                    }
+                    .authCTAStyle()
+                    .disabled(isSubmitting)
+                    .accessibilityIdentifier(A11yID.SignUp.submitButton)
+                    .padding(.top, 8)
+
+                    Button("Đã có tài khoản? Đăng nhập", action: onBack)
+                        .accessibilityIdentifier(A11yID.SignUp.goToSignInButton)
                 }
-                if let info = infoMessage {
-                    Text(info).foregroundStyle(.green).font(.footnote)
-                        .accessibilityIdentifier(A11yID.SignUp.infoText)
-                }
-
-                Button {
-                    Task { await submit() }
-                } label: {
-                    if isSubmitting { ProgressView().frame(maxWidth: .infinity) }
-                    else { Text("Tạo tài khoản").frame(maxWidth: .infinity) }
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(isSubmitting)
-                .accessibilityIdentifier(A11yID.SignUp.submitButton)
-
-                Button("Đã có tài khoản? Đăng nhập", action: onBack)
-                    .frame(maxWidth: .infinity)
-                    .accessibilityIdentifier(A11yID.SignUp.goToSignInButton)
-
-                Spacer()
+                .padding(24)
             }
-            .padding(24)
             .navigationTitle("Tạo tài khoản")
             .navigationBarTitleDisplayMode(.inline)
         }

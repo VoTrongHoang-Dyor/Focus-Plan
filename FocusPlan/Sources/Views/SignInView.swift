@@ -11,21 +11,35 @@ struct SignInView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 16) {
-                Text("Đăng nhập").font(.largeTitle).bold()
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.bottom, 16)
+            VStack(spacing: 16) {
+                Spacer()
 
-                TextField("Email", text: $email)
-                    .textInputAutocapitalization(.never)
-                    .keyboardType(.emailAddress)
-                    .autocorrectionDisabled()
-                    .textFieldStyle(.roundedBorder)
-                    .accessibilityIdentifier(A11yID.SignIn.emailField)
+                Image("BrandLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 120)
 
-                SecureField("Mật khẩu", text: $password)
-                    .textFieldStyle(.roundedBorder)
-                    .accessibilityIdentifier(A11yID.SignIn.passwordField)
+                Text("Đăng nhập")
+                    .font(.title.bold())
+                    .multilineTextAlignment(.center)
+                Text("Chào mừng bạn quay lại")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.onSurfaceVariant)
+
+                VStack(spacing: 16) {
+                    AuthField(icon: "envelope") {
+                        TextField("Email", text: $email)
+                            .textInputAutocapitalization(.never)
+                            .keyboardType(.emailAddress)
+                            .autocorrectionDisabled()
+                            .accessibilityIdentifier(A11yID.SignIn.emailField)
+                    }
+                    AuthField(icon: "lock") {
+                        SecureField("Mật khẩu", text: $password)
+                            .accessibilityIdentifier(A11yID.SignIn.passwordField)
+                    }
+                }
+                .padding(.top, 12)
 
                 if let msg = validationError ?? auth.errorMessage {
                     Text(msg).foregroundStyle(.red).font(.footnote)
@@ -35,15 +49,18 @@ struct SignInView: View {
                 Button {
                     Task { await submit() }
                 } label: {
-                    if isSubmitting { ProgressView().frame(maxWidth: .infinity) }
-                    else { Text("Đăng nhập").frame(maxWidth: .infinity) }
+                    if isSubmitting {
+                        ProgressView().tint(.white).frame(maxWidth: .infinity)
+                    } else {
+                        Text("Đăng nhập").font(.headline).frame(maxWidth: .infinity)
+                    }
                 }
-                .buttonStyle(.borderedProminent)
+                .authCTAStyle()
                 .disabled(isSubmitting)
                 .accessibilityIdentifier(A11yID.SignIn.submitButton)
+                .padding(.top, 8)
 
                 Button("Chưa có tài khoản? Tạo tài khoản", action: onTapCreateAccount)
-                    .frame(maxWidth: .infinity)
                     .accessibilityIdentifier(A11yID.SignIn.goToSignUpButton)
 
                 Spacer()
