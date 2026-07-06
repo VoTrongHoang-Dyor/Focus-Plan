@@ -25,6 +25,21 @@ enum A11yID {
     enum Home {
         static let greetingText = "home.greeting-text"
         static let signOutButton = "home.sign-out-button"
+        static let alarmButton = "home.alarm-button"
+    }
+
+    enum AlarmForm {
+        static let timeText = "alarmform.time-text"
+        static let timePicker = "alarmform.time-picker"
+        /// weekday chuẩn Calendar: 1=CN … 7=T7.
+        static func dayToggle(_ weekday: Int) -> String { "alarmform.day-toggle-\(weekday)" }
+        static let loopAudioToggle = "alarmform.loop-audio-toggle"
+        static let vibrateToggle = "alarmform.vibrate-toggle"
+        static let volumeMaxToggle = "alarmform.volume-max-toggle"
+        static let showNotificationToggle = "alarmform.show-notification-toggle"
+        static let createButton = "alarmform.create-button"
+        static let cancelButton = "alarmform.cancel-button"
+        static let hintText = "alarmform.hint-text"
     }
 
     enum TaskList {

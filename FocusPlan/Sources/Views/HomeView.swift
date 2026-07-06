@@ -4,6 +4,8 @@ struct HomeView: View {
     @ObservedObject var auth: AuthViewModel
     let email: String
 
+    @State private var showAlarmForm = false
+
     private let labels = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"]
 
     private var weekDays: [Date] {
@@ -36,6 +38,15 @@ struct HomeView: View {
             .padding(16)
             .navigationTitle("Today")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showAlarmForm = true
+                    } label: {
+                        Image(systemName: "alarm")
+                    }
+                    .accessibilityLabel("Tạo báo thức")
+                    .accessibilityIdentifier(A11yID.Home.alarmButton)
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         Task { await auth.signOut() }
@@ -46,6 +57,7 @@ struct HomeView: View {
                     .accessibilityIdentifier(A11yID.Home.signOutButton)
                 }
             }
+            .sheet(isPresented: $showAlarmForm) { AlarmFormView() }
         }
     }
 
