@@ -12,18 +12,27 @@ struct TaskListView: View {
             if vm.isLoading && vm.tasks.isEmpty {
                 ProgressView()
             } else if vm.tasks.isEmpty {
-                VStack {
+                VStack(spacing: 12) {
+                    Image(systemName: "tray")
+                        .font(.system(size: 36))
+                        .foregroundStyle(Theme.onSurfaceVariant)
+                    // Giữ NGUYÊN văn bản — TaskFlowUITests/AuthFlowUITests định vị bằng text này.
                     Text("Chưa có task nào — thêm bằng nút +")
-                        .multilineTextAlignment(.center).padding(24)
+                        .font(.subheadline)
+                        .foregroundStyle(Theme.onSurfaceVariant)
+                        .multilineTextAlignment(.center)
                 }
+                .padding(32)
                 .frame(maxWidth: .infinity)
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+                .background(Theme.surfaceVariant, in: RoundedRectangle(cornerRadius: Theme.radiusCard))
                 .accessibilityIdentifier(A11yID.TaskList.emptyState)
             } else {
                 List {
                     ForEach(vm.tasks) { task in
                         Button { editingTask = task } label: { row(task) }
                             .buttonStyle(.plain)
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
                             .accessibilityIdentifier(A11yID.TaskList.row(task.id))
                     }
                     .onDelete { indexSet in
@@ -37,7 +46,7 @@ struct TaskListView: View {
         .overlay(alignment: .bottomTrailing) {
             Button { showingAdd = true } label: {
                 Image(systemName: "plus").font(.title2.bold()).padding()
-                    .background(Color.accentColor, in: Circle()).foregroundStyle(.white)
+                    .background(Theme.primary, in: Circle()).foregroundStyle(.white)
             }
             .padding(24)
             .accessibilityLabel("Thêm task")
@@ -58,19 +67,50 @@ struct TaskListView: View {
 
     @ViewBuilder
     private func row(_ task: TaskItem) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(task.name).font(.body)
-            HStack(spacing: 8) {
-                Text(task.priority.label).font(.caption)
-                    .padding(.horizontal, 8).padding(.vertical, 2)
-                    .background(Color(.secondarySystemBackground), in: Capsule())
-                if let m = task.estimatedMinutes { Text("\(m) phút").font(.caption).foregroundStyle(.secondary) }
-                if let d = task.deadline {
-                    Text(d.formatted(date: .abbreviated, time: .shortened))
-                        .font(.caption).foregroundStyle(.secondary)
+        let accent = priorityColor(task.priority)
+        HStack(alignment: .top, spacing: 0) {
+            RoundedRectangle(cornerRadius: 2)
+                .fill(accent)
+                .frame(width: 4)
+            VStack(alignment: .leading, spacing: 8) {
+                Text(task.name).font(.subheadline.weight(.semibold))
+                HStack(spacing: 6) {
+                    badge(task.priority.label, color: accent, filled: true)
+                    if let m = task.estimatedMinutes {
+                        badge("\(m) phút", color: Theme.onSurfaceVariant, filled: false)
+                    }
+                    if let d = task.deadline {
+                        badge(d.formatted(date: .abbreviated, time: .shortened),
+                              color: Theme.onSurfaceVariant, filled: false)
+                    }
                 }
             }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
         }
-        .padding(.vertical, 4)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: Theme.radiusCard))
+        .clipShape(RoundedRectangle(cornerRadius: Theme.radiusCard))
+        .shadow(color: .black.opacity(0.05), radius: 6, y: 2)
+    }
+
+    private func priorityColor(_ priority: TaskPriority) -> Color {
+        switch priority {
+        case .high: return .red
+        case .medium: return .orange
+        case .low: return Theme.onSurfaceVariant
+        }
+    }
+
+    private func badge(_ text: String, color: Color, filled: Bool) -> some View {
+        Text(text)
+            .font(.caption2.weight(.semibold))
+            .foregroundStyle(color)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(filled ? color.opacity(0.12) : Color.clear, in: Capsule())
+            .overlay {
+                if !filled { Capsule().stroke(Theme.onSurfaceVariant.opacity(0.3), lineWidth: 1) }
+            }
     }
 }

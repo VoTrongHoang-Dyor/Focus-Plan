@@ -33,10 +33,12 @@ struct TaskFormView: View {
                     TextField("Tên", text: $name)
                         .accessibilityIdentifier(A11yID.TaskForm.nameField)
                 }
+                .listRowBackground(Theme.surfaceVariant)
                 Section("Thời lượng (phút)") {
                     TextField("vd 30", text: $minutesText).keyboardType(.numberPad)
                         .accessibilityIdentifier(A11yID.TaskForm.minutesField)
                 }
+                .listRowBackground(Theme.surfaceVariant)
                 Section("Độ ưu tiên") {
                     Picker("Độ ưu tiên", selection: $priority) {
                         ForEach(TaskPriority.allCases) { p in Text(p.label).tag(p) }
@@ -60,6 +62,7 @@ struct TaskFormView: View {
                 if let errorMessage { Text(errorMessage).foregroundStyle(.red).font(.footnote)
                     .accessibilityIdentifier(A11yID.TaskForm.errorText) }
             }
+            .tint(Theme.primary)
             .navigationTitle(isEditing ? "Sửa task" : "Xác nhận task")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

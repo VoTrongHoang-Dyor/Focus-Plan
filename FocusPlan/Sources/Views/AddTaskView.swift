@@ -16,17 +16,20 @@ struct AddTaskView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Nhập task bằng câu tự nhiên").font(.headline)
                 TextField("vd: Học tiếng Trung 30 phút tối nay", text: $text, axis: .vertical)
-                    .textFieldStyle(.roundedBorder).lineLimit(2...4)
+                    .lineLimit(2...4)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Theme.surfaceVariant, in: RoundedRectangle(cornerRadius: Theme.radiusInput))
                     .accessibilityIdentifier(A11yID.AddTask.inputField)
                 if let errorMessage { Text(errorMessage).foregroundStyle(.red).font(.footnote)
                     .accessibilityIdentifier(A11yID.AddTask.errorText) }
                 Button {
                     Task { await parse() }
                 } label: {
-                    if isParsing { ProgressView().frame(maxWidth: .infinity) }
-                    else { Text("Phân tích").frame(maxWidth: .infinity) }
+                    if isParsing { ProgressView().tint(.white).frame(maxWidth: .infinity) }
+                    else { Text("Phân tích").font(.headline).frame(maxWidth: .infinity) }
                 }
-                .buttonStyle(.borderedProminent)
+                .authCTAStyle()
                 .disabled(isParsing || text.trimmingCharacters(in: .whitespaces).isEmpty)
                 .accessibilityIdentifier(A11yID.AddTask.parseButton)
                 Spacer()
