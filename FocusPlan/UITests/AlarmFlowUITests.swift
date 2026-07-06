@@ -94,6 +94,9 @@ final class AlarmFlowUITests: XCTestCase {
 
     func test_create_alarm_via_identifiers_and_persist_across_relaunch() {
         let email = seedUser()
+        // UserAlarmStore là single-device (UserDefaults.standard, không theo tài khoản) —
+        // reset ở lần launch đầu để test không phụ thuộc state alarm còn sót từ lần chạy trước.
+        app.launchEnvironment["UITEST_RESET_USER_ALARMS"] = "1"
         app.launch()
         signIn(email: email)
 
@@ -120,6 +123,8 @@ final class AlarmFlowUITests: XCTestCase {
                       "Sheet chưa đóng sau Create Alarm")
 
         // --- Relaunch: session Supabase còn, form prefill từ alarm đã lưu ---
+        // KHÔNG reset UserAlarmStore lần relaunch này — mới chứng minh được persist thật.
+        app.launchEnvironment["UITEST_RESET_USER_ALARMS"] = nil
         app.terminate()
         app.launch()
         XCTAssertTrue(app.buttons["home.alarm-button"].waitForExistence(timeout: 20),

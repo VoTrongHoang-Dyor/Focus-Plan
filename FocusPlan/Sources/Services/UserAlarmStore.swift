@@ -21,4 +21,10 @@ struct UserAlarmStore {
     }
 
     var latest: UserAlarm? { load().last }
+
+    /// Xoá toàn bộ alarm đã lưu. Dùng bởi seam UITEST_RESET_USER_ALARMS (AlarmFlowUITests)
+    /// để đảm bảo state sạch bất kể app đã cài/relaunch bao nhiêu lần trên simulator.
+    static func reset(defaults: UserDefaults = .standard) {
+        defaults.removeObject(forKey: key)
+    }
 }
