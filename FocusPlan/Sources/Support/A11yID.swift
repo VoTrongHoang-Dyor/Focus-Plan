@@ -67,4 +67,12 @@ enum A11yID {
         static let saveButton = "taskform.save-button"
         static let cancelButton = "taskform.cancel-button"
     }
+
+    enum Pomodoro {
+        static let timeText = "pomodoro.time-text"
+        static let startButton = "pomodoro.start-button"
+        static let pauseButton = "pomodoro.pause-button"
+        static let resumeButton = "pomodoro.resume-button"
+        static let stopButton = "pomodoro.stop-button"
+    }
 }

@@ -10,6 +10,8 @@ struct MainTabView: View {
                 .tabItem { Label("Hôm nay", systemImage: "calendar") }
             HabitsView()
                 .tabItem { Label("Thói quen", systemImage: "repeat") }
+            PomodoroView()
+                .tabItem { Label("Tập trung", systemImage: "timer") }
         }
         .tint(Theme.primary)
     }
