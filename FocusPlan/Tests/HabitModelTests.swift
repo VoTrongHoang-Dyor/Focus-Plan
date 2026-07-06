@@ -33,4 +33,24 @@ final class HabitModelTests: XCTestCase {
         XCTAssertEqual(log.status, .done)
         XCTAssertEqual(log.logDate, "2026-07-04")
     }
+
+    func test_dayPart_boundaries_match_flutter_demo() {
+        // demo models/habit.dart:43-47 — <12h sáng, <18h chiều, còn lại tối
+        XCTAssertEqual(DayPart.from(hour: 0), .morning)
+        XCTAssertEqual(DayPart.from(hour: 11), .morning)
+        XCTAssertEqual(DayPart.from(hour: 12), .afternoon)
+        XCTAssertEqual(DayPart.from(hour: 17), .afternoon)
+        XCTAssertEqual(DayPart.from(hour: 18), .evening)
+        XCTAssertEqual(DayPart.from(hour: 23), .evening)
+    }
+
+    func test_habit_dayPart_derived_from_timeOfDay() throws {
+        let json = """
+        {"id":"11111111-1111-1111-1111-111111111111","name":"Đọc sách",
+         "time_of_day":"18:30:00","duration_minutes":15,
+         "created_at":"2026-07-04T00:00:00Z"}
+        """
+        let h = try decoder().decode(Habit.self, from: Data(json.utf8))
+        XCTAssertEqual(h.dayPart, .evening)
+    }
 }
