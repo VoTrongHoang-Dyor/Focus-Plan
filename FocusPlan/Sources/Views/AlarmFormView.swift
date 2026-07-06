@@ -40,6 +40,13 @@ struct AlarmFormView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
+                    VStack(spacing: 8) {
+                        MascotView(size: 120)
+                        Text("Cùng dậy đúng giờ nào!")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(Theme.onSurfaceVariant)
+                            .accessibilityHidden(true)
+                    }
                     timeCard
                     repeatSection
                     settingsSection
