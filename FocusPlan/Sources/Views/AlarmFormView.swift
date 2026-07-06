@@ -23,16 +23,17 @@ struct AlarmFormView: View {
     init(store: UserAlarmStore = UserAlarmStore()) {
         self.store = store
         let cal = Calendar.current
-        let last = store.latest                          // prefill = bằng chứng persist
         let now = Date()
-        let h = last?.hour ?? cal.component(.hour, from: now)
-        let m = last?.minute ?? cal.component(.minute, from: now)
-        _time = State(initialValue: cal.date(bySettingHour: h, minute: m, second: 0, of: now) ?? now)
-        _repeatDays = State(initialValue: last?.repeatDays ?? [])
-        _loopAudio = State(initialValue: last?.loopAudio ?? true)
-        _vibrate = State(initialValue: last?.vibrate ?? true)
-        _systemVolumeMax = State(initialValue: last?.systemVolumeMax ?? true)
-        _showNotification = State(initialValue: last?.showNotification ?? true)
+        // prefill = bằng chứng persist; không có alarm lưu → default = giờ hiện tại + UserAlarm defaults.
+        let alarm = store.latest ?? UserAlarm(hour: cal.component(.hour, from: now),
+                                              minute: cal.component(.minute, from: now))
+        _time = State(initialValue: cal.date(bySettingHour: alarm.hour, minute: alarm.minute,
+                                             second: 0, of: now) ?? now)
+        _repeatDays = State(initialValue: alarm.repeatDays)
+        _loopAudio = State(initialValue: alarm.loopAudio)
+        _vibrate = State(initialValue: alarm.vibrate)
+        _systemVolumeMax = State(initialValue: alarm.systemVolumeMax)
+        _showNotification = State(initialValue: alarm.showNotification)
     }
 
     var body: some View {
