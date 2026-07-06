@@ -1,0 +1,180 @@
+name: iOS CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_uitests:
+        description: "Chạy UITest (cần network Supabase thật, ~30-60 phút)"
+        type: boolean
+        default: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit-tests:
+    name: Build + Unit tests
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select latest stable Xcode
+        run: |
+          XCODE=$(find /Applications -maxdepth 1 -name 'Xcode*.app' | sort -V | tail -1)
+          echo "Using $XCODE"
+          sudo xcode-select -s "$XCODE"
+
+      - name: Install tools
+        run: brew install xcodegen xcbeautify
+
+      - name: Generate Secrets.xcconfig from GitHub Secrets
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "::error::Thiếu SUPABASE_URL / SUPABASE_ANON_KEY trong GitHub Secrets (Settings > Secrets and variables > Actions)."
+            exit 1
+          fi
+          # xcconfig coi "//" là comment -> escape "https://" thành "https:/$()/" (xem Secrets.example.xcconfig)
+          # shellcheck disable=SC2016 # $() trong vế thay thế sed cố ý không expand — literal cho xcconfig
+          ESCAPED_URL=$(printf '%s' "$SUPABASE_URL" | sed 's|://|:/$()/|')
+          printf 'SUPABASE_URL = %s\nSUPABASE_ANON_KEY = %s\n' "$ESCAPED_URL" "$SUPABASE_ANON_KEY" > FocusPlan/Config/Secrets.xcconfig
+
+      - name: Generate Xcode project
+        working-directory: FocusPlan
+        run: xcodegen generate
+
+      - name: Pick available iPhone simulator
+        id: sim
+        run: |
+          DEVICE=$(xcrun simctl list devices available | awk -F' \\(' '/iPhone/{print $1; exit}' | sed 's/^ *//')
+          if [ -z "$DEVICE" ]; then echo "::error::Không tìm thấy iPhone simulator trên runner."; exit 1; fi
+          echo "device=$DEVICE" >> "$GITHUB_OUTPUT"
+          echo "Simulator: $DEVICE"
+
+      - name: Run unit tests
+        working-directory: FocusPlan
+        run: |
+          set -o pipefail
+          xcodebuild -project FocusPlan.xcodeproj -scheme FocusPlan \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.device }}" \
+            -resultBundlePath TestResults/unit.xcresult \
+            test -only-testing:FocusPlanTests | xcbeautify
+
+      - name: Upload unit test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results
+          path: FocusPlan/TestResults/unit.xcresult
+
+  ui-tests:
+    name: UITests (manual gate — workflow_dispatch)
+    if: github.event_name == 'workflow_dispatch' && inputs.run_uitests
+    runs-on: macos-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select latest stable Xcode
+        run: |
+          XCODE=$(find /Applications -maxdepth 1 -name 'Xcode*.app' | sort -V | tail -1)
+          sudo xcode-select -s "$XCODE"
+
+      - name: Install tools
+        run: brew install xcodegen xcbeautify
+
+      - name: Generate Secrets.xcconfig from GitHub Secrets
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "::error::Thiếu SUPABASE_URL / SUPABASE_ANON_KEY trong GitHub Secrets."
+            exit 1
+          fi
+          # shellcheck disable=SC2016 # $() trong vế thay thế sed cố ý không expand — literal cho xcconfig
+          ESCAPED_URL=$(printf '%s' "$SUPABASE_URL" | sed 's|://|:/$()/|')
+          printf 'SUPABASE_URL = %s\nSUPABASE_ANON_KEY = %s\n' "$ESCAPED_URL" "$SUPABASE_ANON_KEY" > FocusPlan/Config/Secrets.xcconfig
+
+      - name: Generate Xcode project
+        working-directory: FocusPlan
+        run: xcodegen generate
+
+      - name: Pick available iPhone simulator
+        id: sim
+        run: |
+          DEVICE=$(xcrun simctl list devices available | awk -F' \\(' '/iPhone/{print $1; exit}' | sed 's/^ *//')
+          if [ -z "$DEVICE" ]; then echo "::error::Không tìm thấy iPhone simulator trên runner."; exit 1; fi
+          echo "device=$DEVICE" >> "$GITHUB_OUTPUT"
+
+      - name: Run UI tests
+        working-directory: FocusPlan
+        run: |
+          set -o pipefail
+          xcodebuild -project FocusPlan.xcodeproj -scheme FocusPlan \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.device }}" \
+            -resultBundlePath TestResults/ui.xcresult \
+            test -only-testing:FocusPlanUITests | xcbeautify
+
+      - name: Upload UI test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-test-results
+          path: FocusPlan/TestResults/ui.xcresult
+
+  archive:
+    name: Release archive (unsigned, hướng TestFlight)
+    runs-on: macos-latest
+    timeout-minutes: 45
+    needs: unit-tests
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select latest stable Xcode
+        run: |
+          XCODE=$(find /Applications -maxdepth 1 -name 'Xcode*.app' | sort -V | tail -1)
+          sudo xcode-select -s "$XCODE"
+
+      - name: Install tools
+        run: brew install xcodegen
+
+      - name: Generate Secrets.xcconfig from GitHub Secrets
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "::error::Thiếu SUPABASE_URL / SUPABASE_ANON_KEY trong GitHub Secrets."
+            exit 1
+          fi
+          # shellcheck disable=SC2016 # $() trong vế thay thế sed cố ý không expand — literal cho xcconfig
+          ESCAPED_URL=$(printf '%s' "$SUPABASE_URL" | sed 's|://|:/$()/|')
+          printf 'SUPABASE_URL = %s\nSUPABASE_ANON_KEY = %s\n' "$ESCAPED_URL" "$SUPABASE_ANON_KEY" > FocusPlan/Config/Secrets.xcconfig
+
+      - name: Generate Xcode project
+        working-directory: FocusPlan
+        run: xcodegen generate
+
+      - name: Build Release archive (unsigned)
+        working-directory: FocusPlan
+        run: |
+          set -o pipefail
+          xcodebuild -project FocusPlan.xcodeproj -scheme FocusPlan \
+            -configuration Release -destination 'generic/platform=iOS' \
+            -archivePath build/FocusPlan.xcarchive \
+            CODE_SIGNING_ALLOWED=NO archive
+
+      - name: Upload archive artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: focusplan-archive
+          path: FocusPlan/build/FocusPlan.xcarchive
