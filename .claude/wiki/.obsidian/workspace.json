@@ -11,26 +11,14 @@
             "id": "764fddb7aeaed08c",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "issues/006-pomodoro-timer.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "Tab mới"
-            }
-          }
-        ]
-      },
-      {
-        "id": "78816de470d114af",
-        "type": "tabs",
-        "children": [
-          {
-            "id": "39a619584d99e76e",
-            "type": "leaf",
-            "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Xem biểu đồ"
+              "title": "006-pomodoro-timer"
             }
           }
         ]
@@ -194,6 +182,8 @@
   },
   "active": "764fddb7aeaed08c",
   "lastOpenFiles": [
+    "Chưa đặt tên.base",
+    "issues/006-pomodoro-timer.md",
     "Chào mừng.md"
   ]
 }

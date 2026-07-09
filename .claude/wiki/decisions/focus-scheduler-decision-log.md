@@ -91,6 +91,12 @@ App mobile chống trì hoãn: báo thức + reschedule tự động 9h sáng + 
 - Mục tiêu kép mới: (a) case study quy trình làm việc (bộ skills cá nhân trong `.claude/skills/` + bộ não thứ 2/wiki) để demo cho nhà tuyển dụng/khách hàng tiềm năng, (b) sản phẩm chạy thật. "Done" = app chạy được thật (TestFlight/demo video) + wiki/PRD/decision log đủ sạch để đọc công khai — cả hai tiêu chí song song, không cái nào là phụ.
 - Không đặt deadline cứng. Chấp nhận rủi ro dự án kéo dài để đổi lấy scope đầy đủ hơn — không giới hạn thêm.
 
+## Bổ sung UI/Engineering (Mascot + MCP + Web)
+
+Xem chi tiết tại `.claude/wiki/decisions/focusplan-swift-mascot-mcp-web-decision-log.md` (phạm vi UI/engineering riêng biệt, không phải core scheduling logic).
+
+---
+
 ## Tính năng mới bổ sung (lấy cảm hứng từ TickTick, MyPlan, Clarify, FlowStack, Focus To-Do)
 
 ### Habit/Routine tracking (TickTick, MyPlan)
@@ -99,11 +105,11 @@ App mobile chống trì hoãn: báo thức + reschedule tự động 9h sáng + 
 - Điểm tích hợp duy nhất với Scheduling Engine: khung giờ habit phải được đọc như busy-block, để Scheduling Engine không xếp task thường đè lên slot habit.
 - Còn mở: UI cụ thể cho habit checklist, độ ưu tiên implement so với Pomodoro timer.
 
-### Pomodoro timer UI (Clarify, FlowStack, Focus To-Do)
+### Pomodoro timer UI (Clarify, FlowStack, Focus To-Do) — DONE issue 006
 
 - Xác nhận đây là cơ chế lấp lỗ hổng có sẵn trong PRD: Gamification/Level 3 badge đã giả định "dữ liệu Pomodoro thực tế" nhưng chưa issue nào định nghĩa cách sinh ra dữ liệu đó. Timer (start/stop/pause) chính là nguồn dữ liệu đó.
-- Chạy nền khi app bị minimize/khoá màn hình; kết thúc phiên báo qua local notification — tái dùng hạ tầng Alarm module đã có (issue 004), không xây cơ chế thông báo mới.
-- Còn mở: độ dài phiên có cấu hình được không (mặc định kiểu Pomodoro cổ điển 25 phút?).
+- Chạy nền khi app bị minimize/khoá màn hình; kết thúc phiên báo qua local notification — tái dùng hạ tầng Alarm module đã có (issue 005), không xây cơ chế thông báo mới.
+- **Đã chốt 2026-07-06 (issue 006 done):** độ dài phiên **cố định 25 phút MVP** per user decision — tab thứ 3 "Tập trung" độc lập, không gắn task. Dữ liệu Pomodoro lưu `pomodoro_sessions` (start_time, actual_duration, user_id) → nguồn dữ liệu cho issues 008/009/013 đọc vào.
 
 ## Tác động tới 16 issue hiện có
 

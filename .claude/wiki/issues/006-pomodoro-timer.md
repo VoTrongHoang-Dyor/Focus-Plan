@@ -1,5 +1,5 @@
 ---
-status: todo
+status: done
 ---
 
 ## Parent Decision Log
@@ -12,10 +12,10 @@ Pomodoro Timer module: màn hình đếm giờ focus session (start/stop/pause).
 
 ## Acceptance criteria
 
-- [ ] User bắt đầu, tạm dừng, và kết thúc một phiên Pomodoro từ UI.
-- [ ] Timer vẫn chạy đúng khi app bị minimize/khoá màn hình.
-- [ ] Kết thúc phiên (hết giờ) bắn local notification, tái dùng hạ tầng notification của issue 005.
-- [ ] Mỗi phiên hoàn thành được lưu lại (thời điểm bắt đầu, thời lượng thực tế) gắn với user hiện tại — đây là dữ liệu nguồn cho các module gamification/reflection sau này đọc vào.
+- [x] User start/pause/end phiên Pomodoro từ tab "Tập trung" (UI xanh, identifier A11yID.Pomodoro.*)
+- [x] Timer chạy đúng khi app minimize/khoá (wall-clock PomodoroEngine, chống suspend error)
+- [x] Kết thúc phiên bắn local notification id `pomodoro-end` (tái dùng issue 005 NotificationScheduling)
+- [x] Phiên hoàn thành lưu Supabase `pomodoro_sessions` (start_time, actual_duration, user_id). Dữ liệu nguồn cho issues 008/009/013. Full suite 57 tests PASS (49 unit + 8 UITests, end-to-end thật).
 
 ## Blocked by
 
